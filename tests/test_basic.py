@@ -101,7 +101,7 @@ def test_exclude():
     player = Player(0.0, 0.0)
     enemy = Enemy(0.0, 0.0)
 
-    q = Query(and_attr={"x", "y"}, exclude_obj=[player])
+    q = Query(and_attr={"x", "y"}, exclude_objs=[player])
 
     @query(w, q)
     def f(e, dt):
