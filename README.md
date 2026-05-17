@@ -1,12 +1,12 @@
 # punyecs
 
-`punyecs` is a tiny Entity Component System (ECS) inspired by [tiny-ecs](https://github.com/bakpakin/tiny-ecs).
+`punyecs` is a tiny Entity Component System (ECS) inspired by [tiny-ecs](https://github.com/bakpakin/tiny-ecs) for Python. `punyecs` operates directly on class attributes as opposed to creating components along with querying mechanisms for fine grain control over which objects are operated on by systems similar to how tiny-ecs works on Lua tables.
 
 # What is it?
 
-In a nutshell, instead of requiring inheritance, one can specify which attributes to operate on and any object (regardless of class) that has those attributes is operated on. That is, if a `Player` has an `x` and `y` attribute and an (unrelated) `Enemy` class has an `x` and `y` attribute you can have them both influenced by a `World` object.
+Instead of requiring inheritance, one can specify which attributes to operate on and any object (regardless of class) that has those attributes is operated on. That is, if a `Player` has an `x` and `y` attribute and an (unrelated) `Enemy` class has an `x` and `y` attribute you can have them both influenced by a `World` object. This avoids complicated inheritance hierarchies.
 
-To do so consider the following small example:
+Here is a small example to illustrate the above:
 
 ```py
 from dataclasses import dataclass
@@ -25,7 +25,7 @@ class Enemy:
     y: float
 
 @requirements(w, {"x", "y"})
-def f(e, dt):
+def move(e, dt):
     e.x += 0.1
     e.y += 0.1
 
@@ -48,11 +48,11 @@ print(enemy.y)
 
 # A Bit More Sophistication
 
-We may also do exclusions for fine grain control. Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the `player` object. We can avoid influencing the `player` object by putting it in the excluded objects list. the function `f` becomes:
+We may also do exclusions for fine grain control. Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the `player` object. We can avoid influencing the `player` object by putting it in the excluded objects list. The function `f` becomes:
 
 ```py
 @requirements(w, {"x", "y"}, exclude_obj=[player])
-def f(e, dt):
+def move(e, dt):
     e.x += 0.1
     e.y += 0.1
 ```
@@ -61,9 +61,9 @@ Then after every `world.update(1)`, the `player` object *will still remain at* `
 
 # Even More Sophistication!
 
-It might be inconvenient to exclude *individual* objects if a large number of objects need to be excluded. One way around this is to specify which attributes an object should *not* have.
+It might be inconvenient to exclude *individual* objects if a large number of objects need to be excluded. `punyecs` provides a couple more filtering options. One way around this is to specify which attributes an object should *not* have.
 
-So for instance, we may have many different kinds of creatures. Most need can follow the usual movement update function, but some creatures have a `wiggle` attribute. `wiggle` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles.
+For instance, we may have many different kinds of creatures. Most can follow the usual movement update function, but some creatures have a `wiggle` attribute. `wiggle` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles.
 
 To illustrate this consider:
 
@@ -123,3 +123,9 @@ print(wiggler.x)
 print(wiggler.y)
 # Prints 5.0
 ```
+
+Thus, `move` does not operate on `wiggler` but `wiggle` does.
+
+# Documentation
+
+Even more filtering options are available. To learn more, see the [readthedocs.](https://punyecs.readthedocs.io/en/latest/api.html)
