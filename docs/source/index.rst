@@ -6,10 +6,7 @@
 punyecs documentation
 =====================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
-
+``punyecs`` is a tiny `Entity Component System (ECS) <https://en.wikipedia.org/wiki/Entity_component_system>`_ inspired by `tiny-ecs <https://github.com/bakpakin/tiny-ecs>`_ for Python. ``punyecs`` operates directly on class attributes as opposed to creating components along with querying mechanisms for fine grain control over which objects are operated on by systems similar to how tiny-ecs works on Lua tables.
 
 .. toctree::
    :maxdepth: 2
