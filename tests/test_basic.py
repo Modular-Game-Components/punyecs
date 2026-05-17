@@ -85,7 +85,7 @@ def test_requirement():
     assert enemy.x == 0.2
     assert enemy.y == 0.2
 
-def test_exclude():
+def test_exclude_attr():
     w = World()
 
     @dataclass
@@ -104,6 +104,94 @@ def test_exclude():
     q = Query(and_attr={"x", "y"}, exclude_objs=[player])
 
     @query(w, q)
+    def f(e, dt):
+        e.x += 0.1
+        e.y += 0.1
+
+    w.add(player)
+    w.add(enemy)
+
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.0
+    assert enemy.y == 0.0
+
+
+    w.update(1)
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.1
+    assert enemy.y == 0.1
+
+    w.update(1)
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.2
+    assert enemy.y == 0.2
+
+def test_exclude_attr_val_query():
+    w = World()
+
+    @dataclass
+    class Player:
+        x: float
+        y: float
+        controller: bool = True
+
+    @dataclass
+    class Enemy:
+        x: float
+        y: float
+
+    player = Player(0.0, 0.0)
+    enemy = Enemy(0.0, 0.0)
+
+    q = Query(and_attr={"x", "y"}, exclude_attr_vals={"controller": True})
+
+    @query(w, q)
+    def f(e, dt):
+        e.x += 0.1
+        e.y += 0.1
+
+    w.add(player)
+    w.add(enemy)
+
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.0
+    assert enemy.y == 0.0
+
+
+    w.update(1)
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.1
+    assert enemy.y == 0.1
+
+    w.update(1)
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.2
+    assert enemy.y == 0.2
+
+def test_exclude_attr_val_req():
+    w = World()
+
+    @dataclass
+    class Player:
+        x: float
+        y: float
+        controller: bool = True
+
+    @dataclass
+    class Enemy:
+        x: float
+        y: float
+
+    player = Player(0.0, 0.0)
+    enemy = Enemy(0.0, 0.0)
+
+    @requirements(w, {"x", "y"}, exclude_attr_vals={"controller": True})
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
