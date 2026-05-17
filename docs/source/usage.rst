@@ -61,7 +61,7 @@ Returning to the example above, we may want various enemies to move like above b
 
 .. code-block:: python
 
-   @requirements(w, {"x", "y"}, exclude_obj=[player])
+   @requirements(w, {"x", "y"}, exclude_objs=[player])
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1

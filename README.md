@@ -51,7 +51,7 @@ print(enemy.y)
 We may also do exclusions for fine grain control. Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the `player` object. We can avoid influencing the `player` object by putting it in the excluded objects list. The function `f` becomes:
 
 ```py
-@requirements(w, {"x", "y"}, exclude_obj=[player])
+@requirements(w, {"x", "y"}, exclude_objs=[player])
 def move(e, dt):
     e.x += 0.1
     e.y += 0.1

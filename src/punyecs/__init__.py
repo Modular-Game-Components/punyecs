@@ -8,7 +8,7 @@ class Query:
     (or disallowed) in a group."""
     and_attr: set[str] = field(default_factory=set)
     exclude_attr: set[str] = field(default_factory=set)
-    exclude_obj: list[Any] = field(default_factory=set)
+    exclude_objs: list[Any] = field(default_factory=set)
 
 
 @dataclass
@@ -23,7 +23,7 @@ class World:
         :param entity: The entity to query.
         :param query: The query to check if the entity can belong to it.
         """
-        for e in query.exclude_obj:
+        for e in query.exclude_objs:
             if entity == e:
                 return False
         for attr in query.and_attr:
@@ -68,19 +68,19 @@ class World:
 def requirements(world: World, 
                  require: set[str],
                  exclude: set[str] | None=None, 
-                 exclude_obj: list[Any] | None=None):
+                 exclude_objs: list[Any] | None=None):
     """Use as a decorator, runs the decorated function on each entity that
     has the required components and none of the excluded components (or
     excluded objects).
 
     :param require: Required attribute for an entity to be ran.
     :param exclude: Entity must *not* have the following attributes.
-    :param exclude_obj: Exculde individual objects from being ran.
+    :param exclude_objs: Exculde individual objects from being ran.
     """
     exclude = exclude or []
-    exclude_obj = exclude_obj or []
+    exclude_objs = exclude_objs or []
     def req_dec(func):
-        query = Query(require, exclude, exclude_obj)
+        query = Query(require, exclude, exclude_objs)
         group = world.push_group(query)
         def inner(e, dt):
             return func(e, dt)
