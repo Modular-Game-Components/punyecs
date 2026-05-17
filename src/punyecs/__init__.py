@@ -8,13 +8,13 @@ class Query:
     (or disallowed) in a group."""
     and_attr: set[str] = field(default_factory=set)
     exclude_attr: set[str] = field(default_factory=set)
-    exclude_objs: list[Any] = field(default_factory=set)
+    exclude_objs: list[Any] = field(default_factory=list)
     exclude_attr_vals: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class World:
-    groups: list[(Query, list, list[Callable[[Any, float], None]])] = \
+    groups: list[tuple[Query, list, list[Callable[[Any, float], None]]]] = \
             field(default_factory=list)
 
     def entity_satisfies_query(self, entity, query) -> bool:
@@ -82,7 +82,7 @@ def requirements(world: World,
     :param exclude: Entity must *not* have the following attributes.
     :param exclude_objs: Exculde individual objects from being ran.
     """
-    exclude = exclude or []
+    exclude = exclude or set()
     exclude_objs = exclude_objs or []
     exclude_attr_vals = exclude_attr_vals or {}
     def req_dec(func):
