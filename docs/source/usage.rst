@@ -51,7 +51,16 @@ Be sure to read the comments! Observe the ``move`` function operates on *both* `
 
 .. note::
 
-   We pass ``1`` to ``w.update(...)`` because in the video game context. We virtually always want to pass some change in time *per frame* of the object. To keep the example simple, we disregard this value, however, you should consider passing ``dt`` in the game context.
+   We pass ``1`` to ``w.update(...)`` because in the video game context we virtually always want to pass some change in time *per frame* of the object. To keep the example simple, we disregard this value, however, you should consider passing ``dt`` in the game context. (For example, in Pygame, a game loop might look something like:
+
+   .. code-block:: python
+      ...
+      dt = 0
+      ...
+      while True:
+          w.update(dt)
+          ...
+          dt = clock.tick(60) / 1000
 
 ------------------------------
 Fine Grained Control: Querying
@@ -68,13 +77,24 @@ Returning to the example above, we may want various enemies to move like above b
 
 Then after every ``w.update(1)`` the ``player`` object *will still remain at* ``x=0.0``, ``y=0.0``.
 
+--------------
+An Alternative
+--------------
+
+It could be that you have multiple characters that are controllable that are *not* the player. You could give them an attribute ``controller: bool = True``. Then exclude an object if it has the ``controller`` attribute *and* the ``controller`` attribute is ``True`` with ``exclude_attr_vals``. That is:
+
+.. code-block:: python
+
+   @requirements(w, {"x", "y"}, exclude_attr_vals={"controller": True})
+   def move(e, dt):
+       e.x += 0.1
+       e.y += 0.1
+
 -----------------------------
 Excluding Based on Attributes
 -----------------------------
 
-It might be inconvenient to exclude individual objects if a large number of objects need to be excluded. ``punyecs`` provides a couple more filtering options. One way around this is to specify which attributes an object should *not* have.
-
-For instance, we may have many different kinds of creatures. Most can follow the usual movement update function, but some creatures have a ``wiggle`` attribute. ``wiggle`` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles.
+We may not care what value the attribute is and simply want to exclude the object if it *has* that attribute. For instance, we may have many different kinds of creatures. Most can follow the usual movement update function, but some creatures have a ``wiggle`` attribute. ``wiggle`` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles.
 
 To illustrate this consider:
 
