@@ -128,4 +128,4 @@ Thus, `move` does not operate on `wiggler` but `wiggle` does.
 
 # Documentation
 
-Even more filtering options are available. To learn more, see the [readthedocs.](https://punyecs.readthedocs.io/en/latest/api.html)
+Even more filtering options are available. To learn more, see the [readthedocs.](https://punyecs.readthedocs.io/en/latest/index.html)
