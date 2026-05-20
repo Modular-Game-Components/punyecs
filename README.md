@@ -129,3 +129,7 @@ Thus, `move` does not operate on `wiggler` but `wiggle` does.
 # Documentation
 
 Even more filtering options are available. To learn more, see the [readthedocs.](https://punyecs.readthedocs.io/en/latest/index.html)
+
+# Contributing
+
+Feel free to [file an issue](https://github.com/Modular-Game-Components/punyecs/issues), [make a pull request](https://github.com/Modular-Game-Components/punyecs/pulls) or, if you really like the project, [donate.](https://www.paypal.com/donate/?business=9ZQ9S6RJBVATY&no_recurring=0&currency_code=USD) (No pressure though.)
