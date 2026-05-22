@@ -77,9 +77,9 @@ Returning to the example above, we may want various enemies to move like above b
 
 Then after every ``w.update(1)`` the ``player`` object *will still remain at* ``x=0.0``, ``y=0.0``.
 
---------------
-An Alternative
---------------
+----------------------------------------
+An Alternative: Exclude Based on a Value
+----------------------------------------
 
 It could be that you have multiple characters that are controllable that are *not* the player. You could give them an attribute ``controller: bool = True``. Then exclude an object if it has the ``controller`` attribute *and* the ``controller`` attribute is ``True`` with ``exclude_attr_vals``. That is:
 
@@ -89,6 +89,20 @@ It could be that you have multiple characters that are controllable that are *no
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1
+
+---------------------------------------------------
+An Extension: Exclude Based on Attribute Predicates
+---------------------------------------------------
+
+Excluding based on the singular value of an attribute still might not be enough control. Suppose we have high level entities and low level entities and that most entities (except high level entities) are affected by gravity. More precisely, suppose high level enemies are those that have an attribute ``level > 50``. Gravity typically operates on the ``y`` attribute so we may write something like:
+
+.. code-block:: python
+
+   @requirements(w, {"y"}, exclude_attr_funcs={"level": lambda lvl: lvl > 50})
+   def gravity(e):
+       e.y -= GRAVITY
+
+The ``exclude_attr_funcs`` takes in a dictionary of attribute names and a function. This function takes one parameter, namely the attribute corresponding to the key. The function then determines if the attribute satisfies the predicate and, if so, excludes that entity from the group.
 
 -----------------------------
 Excluding Based on Attributes
