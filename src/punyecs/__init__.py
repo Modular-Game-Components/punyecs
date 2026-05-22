@@ -10,6 +10,8 @@ class Query:
     exclude_attr: set[str] = field(default_factory=set)
     exclude_objs: list[Any] = field(default_factory=list)
     exclude_attr_vals: dict[str, Any] = field(default_factory=dict)
+    exclude_attr_funcs: dict[str, Callable[[Any], bool]] = \
+        field(default_factory=dict)
 
 
 @dataclass
@@ -35,6 +37,9 @@ class World:
                 return False
         for attr, val in query.exclude_attr_vals.items():
             if hasattr(entity, attr) and getattr(entity, attr) == val:
+                return False
+        for attr, f in query.exclude_attr_funcs.items():
+            if hasattr(entity, attr) and f(getattr(entity, attr)):
                 return False
         return True
 
@@ -73,7 +78,9 @@ def requirements(world: World,
                  require: set[str],
                  exclude: set[str] | None=None, 
                  exclude_objs: list[Any] | None=None,
-                 exclude_attr_vals: dict[str, Any] | None = None):
+                 exclude_attr_vals: dict[str, Any] | None = None,
+                 exclude_attr_funcs: dict[str, Callable[[Any], bool]] | None =\
+                    None):
     """Use as a decorator, runs the decorated function on each entity that
     has the required components and none of the excluded components (or
     excluded objects).
