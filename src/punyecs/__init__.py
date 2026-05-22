@@ -88,6 +88,10 @@ def requirements(world: World,
     :param require: Required attribute for an entity to be ran.
     :param exclude: Entity must *not* have the following attributes.
     :param exclude_objs: Exculde individual objects from being ran.
+    :param exclude_attr_vals: Exclude objects that have an attribute with a
+       particular value.
+    :param exclude_attr_funcs: Exclude objects whose attributes do not satisfy
+       certain predicates.
     """
     exclude = exclude or set()
     exclude_objs = exclude_objs or []
