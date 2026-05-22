@@ -5,7 +5,7 @@ Usage
 What is it? (And an Example)
 ----------------------------
 
-Instead of requiring inheritance, one can specify which attributes to operate on and any objec that has those attributes is operated on. That is, if a ``Player`` has an ``x`` and ``y`` attribute and an (unrelated) ``Enemy`` class has an ``x`` and ``y`` attribute you can have them both influenced by a ``World`` object. This avoids complicated inheritance hierarchies.
+Instead of requiring inheritance, one can specify which attributes to operate on and any object that has those attributes is then operated on. That is, if a ``Player`` has an ``x`` and ``y`` attribute and an (unrelated) ``Enemy`` class has an ``x`` and ``y`` attribute you can have them both influenced by a ``World`` object. This avoids complicated inheritance hierarchies.
 
 Here is a small example to illustrate the above:
 
