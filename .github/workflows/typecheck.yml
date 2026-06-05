@@ -10,5 +10,10 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: facebook/pyrefly@main
+      - uses: actions/checkout@v5
+      - name: Install the latest version of uv and set the python version
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+      - name: Typecheck with Pyrefly
+        run: |
+          uv sync --locked --all-extras --dev
+          uvx pyrefly check --output-format=github
