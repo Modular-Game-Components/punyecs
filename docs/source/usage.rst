@@ -54,6 +54,7 @@ Be sure to read the comments! Observe the ``move`` function operates on *both* `
    We pass ``1`` to ``w.update(...)`` because in the video game context we virtually always want to pass some change in time *per frame* of the object. To keep the example simple, we disregard this value, however, you should consider passing ``dt`` in the game context. (For example, in Pygame, a game loop might look something like:
 
    .. code-block:: python
+
       ...
       dt = 0
       ...

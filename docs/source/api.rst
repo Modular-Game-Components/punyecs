@@ -1,5 +1,5 @@
 API
 ===
 
-.. automodapi:: punyecs
-   :no-inheritance-diagram:
+.. automodule:: punyecs
+   :members:
