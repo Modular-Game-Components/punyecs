@@ -1,4 +1,4 @@
-<p class="center">
+<p align="center">
   <img src="punyecs_logo.svg" alt="punyecs">
 </p>
 
