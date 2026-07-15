@@ -4,6 +4,20 @@
 
 `punyecs` is a tiny Entity Component System (ECS) inspired by [tiny-ecs](https://github.com/bakpakin/tiny-ecs) for Python. `punyecs` operates directly on class attributes as opposed to creating components along with querying mechanisms for fine grain control over which objects are operated on by systems similar to how tiny-ecs works on Lua tables.
 
+# Quick Install
+
+If you use [pip](https://pypi.org/project/pip/):
+
+```
+pip install punyecs
+```
+
+If you use [uv](https://github.com/astral-sh/uv):
+
+```
+uv add punyecs
+```
+
 # What is it?
 
 Instead of requiring inheritance, one can specify which attributes to operate on and any object (regardless of class) that has those attributes is operated on. That is, if a `Player` has an `x` and `y` attribute and an (unrelated) `Enemy` class has an `x` and `y` attribute you can have them both influenced by a `World` object. This avoids complicated inheritance hierarchies.
@@ -81,7 +95,7 @@ class Player:
     y: float
 
 @dataclass
-class WalkingEnemy:
+class Enemy:
     x: float
     y: float
 
