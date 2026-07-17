@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from punyecs import World, Query, query, requirements
+from punyecs import World, Query, query, requirements, one_shot
 
 
 def test_query():
@@ -217,3 +217,45 @@ def test_exclude_attr_val_req():
     assert enemy.x == 0.2
     assert enemy.y == 0.2
 
+
+def test_one_shot():
+    w = World()
+    
+    @dataclass
+    class Player:
+        x: int
+        y: int
+
+    @dataclass
+    class Enemy:
+        x: int
+        y: int
+        z: int
+
+    @one_shot(w, {"x", "y", "z"})
+    def inc_x(e):
+        e.x += 1
+
+    e1 = Enemy(0, 0, 0)
+    e2 = Enemy(0, 0, 0)
+    p1 = Player(0, 0)
+
+    w.add(e1)
+    w.add(e2)
+    w.add(p1)
+
+    assert(e1.x == 0)
+    assert(e2.x == 0)
+    assert(p1.x == 0)
+
+    inc_x()
+
+    assert(e1.x == 1)
+    assert(e2.x == 1)
+    assert(p1.x == 0)
+
+    inc_x()
+
+    assert(e1.x == 2)
+    assert(e2.x == 2)
+    assert(p1.x == 0)

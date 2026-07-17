@@ -13,35 +13,34 @@ class Query:
     exclude_attr_funcs: dict[str, Callable[[Any], bool]] = \
         field(default_factory=dict)
 
+def entity_satisfies_query(entity, query) -> bool:
+    """Check if an entity should (or should not) be added to a particular
+    group by analyzing the query structure.
+
+    :param entity: The entity to query.
+    :param query: The query to check if the entity can belong to it.
+    """
+    for e in query.exclude_objs:
+        if entity == e:
+            return False
+    for attr in query.and_attr:
+        if not hasattr(entity, attr):
+            return False
+    for attr in query.exclude_attr:
+        if hasattr(entity, attr):
+            return False
+    for attr, val in query.exclude_attr_vals.items():
+        if hasattr(entity, attr) and getattr(entity, attr) == val:
+            return False
+    for attr, f in query.exclude_attr_funcs.items():
+        if hasattr(entity, attr) and f(getattr(entity, attr)):
+            return False
+    return True
 
 @dataclass
 class World:
     groups: list[tuple[Query, list, list[Callable[[Any, float], None]]]] = \
             field(default_factory=list)
-
-    def entity_satisfies_query(self, entity, query) -> bool:
-        """Check if an entity should (or should not) be added to a particular
-        group by analyzing the query structure.
-
-        :param entity: The entity to query.
-        :param query: The query to check if the entity can belong to it.
-        """
-        for e in query.exclude_objs:
-            if entity == e:
-                return False
-        for attr in query.and_attr:
-            if not hasattr(entity, attr):
-                return False
-        for attr in query.exclude_attr:
-            if hasattr(entity, attr):
-                return False
-        for attr, val in query.exclude_attr_vals.items():
-            if hasattr(entity, attr) and getattr(entity, attr) == val:
-                return False
-        for attr, f in query.exclude_attr_funcs.items():
-            if hasattr(entity, attr) and f(getattr(entity, attr)):
-                return False
-        return True
 
     def push_group(self, query: Query):
         """Add the group and return that group.
@@ -59,7 +58,7 @@ class World:
         :param entity: The entity to add to the world.
         """
         for query, group, funcs in self.groups:
-            if self.entity_satisfies_query(entity, query):
+            if entity_satisfies_query(entity, query):
                 group.append(entity)
 
     def update(self, dt: float):
@@ -102,6 +101,40 @@ def requirements(world: World,
         def inner(e, dt):
             return func(e, dt)
         group[2].append(inner)
+        return inner
+    return req_dec
+
+def one_shot(world: World, 
+             require: set[str],
+             exclude: set[str] | None=None, 
+             exclude_objs: list[Any] | None=None,
+             exclude_attr_vals: dict[str, Any] | None = None,
+             exclude_attr_funcs: dict[str, Callable[[Any], bool]] | None =\
+             None):
+    """Use as a decorator. Suppose you have a function `f(e)` that operates on
+    some entity and you decorate it with one_shot. The returned function
+    takes no parameters and when called it is applied to every entity that
+    satisfies the query declared in the one_shot decorator. This contrasts
+    with the requirements decorator, because requirements causes all 
+    decorated functions to invoke when `update` is called.
+
+    :param require: Required attribute for an entity to be ran.
+    :param exclude: Entity must *not* have the following attributes.
+    :param exclude_objs: Exculde individual objects from being ran.
+    :param exclude_attr_vals: Exclude objects that have an attribute with a
+       particular value.
+    :param exclude_attr_funcs: Exclude objects whose attributes do not satisfy
+       certain predicates.
+    """
+    exclude = exclude or set()
+    exclude_objs = exclude_objs or []
+    exclude_attr_vals = exclude_attr_vals or {}
+    def req_dec(func):
+        query = Query(require, exclude, exclude_objs, exclude_attr_vals)
+        group = world.push_group(query)
+        def inner():
+            for entity in group[1]:
+                func(entity)
         return inner
     return req_dec
 
