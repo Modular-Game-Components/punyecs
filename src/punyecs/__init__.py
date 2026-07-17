@@ -61,6 +61,14 @@ class World:
             if entity_satisfies_query(entity, query):
                 group.append(entity)
 
+    def extend(self, entities: list[Any]):
+        """Add a collection of entities to the world.
+
+        :param entities: The collection of entities to add to the world.
+        """
+        for entity in entities:
+            self.add(entity)
+
     def update(self, dt: float):
         """Update the world (and all the corresponding groups/entities).
 
