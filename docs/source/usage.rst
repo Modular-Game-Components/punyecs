@@ -169,3 +169,50 @@ To illustrate this consider:
    # Prints 5.0
    print(wiggler.y)
    # Prints 5.0
+
+-----------------------------------
+Refinements on Updating: `one_shot`
+-----------------------------------
+
+`update` is often used in ECS, but what if you do not want to update every group? Furthermore, `update` is often in the gameloop, but what if you need to invoke a function on a bunch of objects outside the gameloop? This is where the
+`one_shot` decorator comes into play.
+
+Consider this simple setup:
+
+.. code-block:: python
+
+   from dataclasses import dataclass
+   from punyecs import World, one_shot
+
+       @dataclass
+    class Player:
+        x: int
+        y: int
+
+    @dataclass
+    class Enemy:
+        x: int
+        y: int
+        z: int
+
+    @one_shot(w, {"x", "y", "z"})
+    def inc_x(e):
+        e.x += 1
+
+    e1 = Enemy(0, 0, 0)
+    e2 = Enemy(0, 0, 0)
+    p1 = Player(0, 0)
+
+    w.add(e1)
+    w.add(e2)
+    w.add(p1)
+
+What have we done? We've added one player and two enemies to a world `w`. Furthermore, we've added a `@one_shot` decorator. Thus, whenever we call `inc_x` *without arguments* it updates *every* enemy character (more precisely any object with `x`, `y`, and `z` attributes). Player remains the same because it lacks the `z` component. Thus, `inc_x()` can be placed anywhere and it will `update` a *specific* group of entities. So
+
+.. code-block:: python
+
+   >>> e1.x, e2.x, p1.x
+   (0, 0, 0)
+   >>> inc_x()
+   >>> e1.x, e2.x, p1.x
+   (1, 1, 0)
