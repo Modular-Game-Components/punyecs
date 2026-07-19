@@ -4,7 +4,7 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Modular-Game-Components/punyecs/pytest.yml)
 
-`punyecs` is a tiny Entity Component System (ECS) inspired by [tiny-ecs](https://github.com/bakpakin/tiny-ecs) for Python. `punyecs` operates directly on class attributes as opposed to creating components along with querying mechanisms for fine grain control over which objects are operated on by systems similar to how tiny-ecs works on Lua tables.
+`punyecs` is a tiny Entity Component System (ECS) inspired by [tiny-ecs](https://github.com/bakpakin/tiny-ecs) for Python. `punyecs` operates directly on class attributes as opposed to creating components along with querying mechanisms for fine grain control over which objects are operated on by systems similar to how tiny-ecs works on Lua tables. Decouple what an object can do from what it inherits.
 
 # Quick Install
 
