@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from punyecs import World, Query, query, requirements, one_shot
+from punyecs import World, Query, query, requirements, one_shot, inject_attrs
 
 
 def test_query():
@@ -259,3 +259,36 @@ def test_one_shot():
     assert(e1.x == 2)
     assert(e2.x == 2)
     assert(p1.x == 0)
+
+def test_inject_attrs():
+    coords = {"x": 0, "y": 0, "z": 0}
+
+    @inject_attrs(coords, exclude={"z"})
+    class Player:
+        pass
+
+    @inject_attrs(coords, override={"x": 1})
+    class Enemy:
+        pass
+
+    @inject_attrs(coords)
+    class Rock:
+        pass
+
+    player = Player()
+
+    assert(player.x == 0)
+    assert(player.y == 0)
+    assert(not hasattr(player, "z"))
+
+    enemy = Enemy()
+
+    assert(enemy.x == 1)
+    assert(enemy.y == 0)
+    assert(enemy.z == 0)
+
+    rock = Rock()
+
+    assert(rock.x == 0)
+    assert(rock.y == 0)
+    assert(rock.z == 0)

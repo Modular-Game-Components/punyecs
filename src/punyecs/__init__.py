@@ -2,6 +2,34 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 
+def inject_attrs(attrs_val: dict[str, Any], exclude=None, override=None):
+    """Use as a class decorator. Given a dictionary of attribute name to value
+    pairs, set attributes of every object to include those as attributes.
+    Furthermore, if exclude is supplied, do *not* include those attributes.
+    Lastly, if you want to customize the value of an attribute, you may
+    override the supplied value with an override dictionary.
+    :param attr_vals The attribute to value dictionary.
+    :param exclude The attributes to exclude from injection. Defaults to None.
+    :param override The attributes to override their default values. Defaults
+    to None.
+    """
+    def wrapper(cls):
+        nonlocal exclude
+        nonlocal override
+        if exclude is None:
+            exclude = set()
+        if override is None:
+            override = set()
+        for attr, val in attrs_val.items():
+            if attr not in exclude:
+                if attr not in override:
+                    setattr(cls, attr, val)
+                else:
+                    setattr(cls, attr, override[attr])
+        return cls
+    return wrapper
+
+
 @dataclass
 class Query:
     """A class that represnets which attributes and objects should be allowed
