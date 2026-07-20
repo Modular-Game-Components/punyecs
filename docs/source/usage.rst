@@ -216,3 +216,45 @@ What have we done? We've added one player and two enemies to a world `w`. Furthe
    >>> inc_x()
    >>> e1.x, e2.x, p1.x
    (1, 1, 0)
+
+=================================
+DRY in the Absence of Inheritance
+=================================
+
+One problem not addressed yet is "Don't Repeat Yourself" (DRY). One might notice that a benefit of using inheritance is that you do not need to retype inherited attritbutes. This "benefit" is more or less nullified with the punyecs decorator `inject_attrs`. `inject_attrs` takes a dictionary of attributes to value mappings and gives all of them to the decorated class objects. Not only that, but you can supply the optional arguments `exclude` and `override` to gain fine control over how the variables are injected. In particular, `exclude` is a set of attributes to *not* include, and `override` changes the values of the injected attributes to be a custom value. Here is an example of all these things at work:
+
+.. code-block:: python
+
+   coords = {"x": 0, "y": 0, "health": 2}
+
+   @inject_attrs(coords)
+   class Player:
+       pass
+
+   @inject_attrs(coords, override={"health": 1})
+   class Enemy:
+       pass
+   
+   @inject_attrs(coords, exclude={"health"})
+   class Rock:
+       pass
+
+Then, observe:
+
+.. code-block:: python
+
+   >>> player = Player()
+   >>> player.x
+   0
+   >>> player.y
+   0
+   >>> player.health
+   2
+   >>> enemy = Enemy()
+   >>> enemy.health
+   1
+   >>> rock = Rock()
+   >>> hasattr(rock, "health")
+   False
+
+So, as we can see, the `player` object is given (but *not through inheritance*) various properties. The `enemy` object has those attributes as well, but the health was *overridden* to be `1` instead of `2`. And `rock` gets all the attributes *except* the `health` attribute.
