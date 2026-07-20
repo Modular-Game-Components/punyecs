@@ -19,7 +19,7 @@ def inject_attrs(attrs_val: dict[str, Any], exclude=None, override=None):
         if exclude is None:
             exclude = set()
         if override is None:
-            override = set()
+            override = dict()
         for attr, val in attrs_val.items():
             if attr not in exclude:
                 if attr not in override:

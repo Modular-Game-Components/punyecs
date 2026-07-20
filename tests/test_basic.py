@@ -277,18 +277,26 @@ def test_inject_attrs():
 
     player = Player()
 
+    # pyrefly: ignore[missing-attribute] 
     assert(player.x == 0)
+    # pyrefly: ignore[missing-attribute] 
     assert(player.y == 0)
     assert(not hasattr(player, "z"))
 
     enemy = Enemy()
 
+    # pyrefly: ignore[missing-attribute] 
     assert(enemy.x == 1)
+    # pyrefly: ignore[missing-attribute] 
     assert(enemy.y == 0)
+    # pyrefly: ignore[missing-attribute] 
     assert(enemy.z == 0)
 
     rock = Rock()
 
+    # pyrefly: ignore[missing-attribute] 
     assert(rock.x == 0)
+    # pyrefly: ignore[missing-attribute] 
     assert(rock.y == 0)
+    # pyrefly: ignore[missing-attribute] 
     assert(rock.z == 0)
