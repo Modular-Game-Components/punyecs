@@ -86,7 +86,7 @@ For instance, we may have many different kinds of creatures. Most can follow the
 To illustrate this consider:
 
 ```py
-from punyecs import World, requirements, Trait, give_traits, c, exattr
+from punyecs import World, requirements, Trait, give_traits, c, ex_attr, has_attr
 
 w = World()
 Pos = Trait(x=0.0, y=0.0)
@@ -103,12 +103,12 @@ class Enemy:
 class Wiggler:
     wiggle = lambda x: x + 2
 
-@requirements(w, Pos, subject_to=exattr(c, "wiggle"))
+@requirements(w, Pos, subject_to=ex_attr(c, "wiggle"))
 def move(e, dt):
     e.x += 0.1
     e.y += 0.1
 
-@requirements(w, Pos, subject_to=hasattr(c, "wiggle"))
+@requirements(w, Pos, subject_to=has_attr(c, "wiggle"))
 def wiggle(e, dt):
     e.x = wiggle(e.x)
     e.y = wiggle(e.y)
