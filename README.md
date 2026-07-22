@@ -99,7 +99,7 @@ class Player:
 class Enemy:
     pass
 
-@give_traits(Pos, override={"x": 3.0 "y": 3.0})
+@give_traits(Pos, override={"x": 3.0, "y": 3.0})
 class Wiggler:
     wiggle = lambda x: x + 2
 
