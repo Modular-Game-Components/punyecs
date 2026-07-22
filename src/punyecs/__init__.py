@@ -47,22 +47,6 @@ class c:
     def eval(self):
         return self._obj
 
-    __add__ = register_bin_op(operator.__add__)
-    __radd__ = register_bin_op(operator.__add__)
-    __sub__ = register_bin_op(operator.__sub__)
-    __rsub__ = register_bin_op(operator.__sub__)
-    __mul__ = register_bin_op(operator.__mul__)
-    __rmul__ = register_bin_op(operator.__mul__)
-    __truediv__ = register_bin_op(operator.__truediv__)
-    __rtruediv__ = register_bin_op(operator.__truediv__)
-    __floordiv__ = register_bin_op(operator.__floordiv__)
-    __rfloordiv__ = register_bin_op(operator.__floordiv__)
-    # pyrefly: ignore
-    __eq__ = register_bin_op(operator.__eq__)
-    __lt__ = register_bin_op(operator.__lt__)
-    __gt__ = register_bin_op(operator.__gt__)
-    __and__ = register_bin_op(operator.__and__)
-    __or__ = register_bin_op(operator.__or__)
 
 @dataclass
 class Const:
@@ -94,6 +78,23 @@ class Constraint:
             assert(self.val2 is not None)
             return self.bin_op(self.val1.eval(), self.val2.eval())
 
+    __add__ = register_bin_op(operator.__add__)
+    __radd__ = register_bin_op(operator.__add__)
+    __sub__ = register_bin_op(operator.__sub__)
+    __rsub__ = register_bin_op(operator.__sub__)
+    __mul__ = register_bin_op(operator.__mul__)
+    __rmul__ = register_bin_op(operator.__mul__)
+    __truediv__ = register_bin_op(operator.__truediv__)
+    __rtruediv__ = register_bin_op(operator.__truediv__)
+    __floordiv__ = register_bin_op(operator.__floordiv__)
+    __rfloordiv__ = register_bin_op(operator.__floordiv__)
+    # pyrefly: ignore
+    __eq__ = register_bin_op(operator.__eq__)
+    __lt__ = register_bin_op(operator.__lt__)
+    __gt__ = register_bin_op(operator.__gt__)
+    __and__ = register_bin_op(operator.__and__)
+    __or__ = register_bin_op(operator.__or__)
+
 class Trait:
     """A collection of attributes along with their values that other classes
     can be given.
@@ -106,7 +107,7 @@ class Trait:
             yield key
 
     def __add__(self, other):
-        return self._fields | other._fields
+        return Trait(**(self._fields | other._fields))
 
 
 def ex_attr(obj, name):
