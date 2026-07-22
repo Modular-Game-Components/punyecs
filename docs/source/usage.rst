@@ -88,7 +88,7 @@ It could be that you have multiple characters that are controllable that are *no
 .. code-block:: python
    from punyecs import c
 
-   @requirements(w, Pos, subject_to=c.controller.is_(True))
+   @requirements(w, Pos, subject_to=c.controller)
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1
@@ -187,7 +187,7 @@ Consider this simple setup:
    Pos = Trait(x=0, y=0, z=0)
 
    @dataclass
-   @give_traits(Pos, exclude={"x"})
+   @give_traits(Pos, exclude={"z"})
    class Player:
        pass
 
@@ -196,17 +196,17 @@ Consider this simple setup:
    class Enemy:
        pass
 
-    @one_shot(w, Pos)
-    def inc_x(e):
-        e.x += 1
+   @one_shot(w, Pos)
+   def inc_x(e):
+       e.x += 1
 
-    e1 = Enemy(0, 0, 0)
-    e2 = Enemy(0, 0, 0)
-    p1 = Player(0, 0)
+   e1 = Enemy(0, 0, 0)
+   e2 = Enemy(0, 0, 0)
+   p1 = Player(0, 0)
 
-    w.add(e1)
-    w.add(e2)
-    w.add(p1)
+   w.add(e1)
+   w.add(e2)
+   w.add(p1)
 
 What have we done? We've added one player and two enemies to a world `w`. Furthermore, we've added a `@one_shot` decorator. Thus, whenever we call `inc_x` *without arguments* it updates *every* enemy character (more precisely any object with `x`, `y`, and `z` attributes). Player remains the same because it lacks the `z` component. Thus, `inc_x()` can be placed anywhere and it will `update` a *specific* group of entities. So
 
