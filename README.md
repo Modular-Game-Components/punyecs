@@ -1,6 +1,8 @@
 <p align="center">
-  <img src="punyecs_logo.svg" alt="punyecs">
+  <img src="punyecs-logo.svg" alt="punyecs">
 </p>
+
+# punyecs
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Modular-Game-Components/punyecs/pytest.yml)
 

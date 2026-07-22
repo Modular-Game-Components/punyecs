@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+  <!-- punyecs logo: an entity node linked to its components, Python yellow-to-blue gradient -->
+
+  <defs>
+    <linearGradient id="pyGradient" gradientUnits="userSpaceOnUse" x1="36" y1="126" x2="128" y2="34">
+      <stop offset="0%" stop-color="#FFD43B"/>
+      <stop offset="100%" stop-color="#306998"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="152" height="152" rx="28" fill="#2B2118"/>
+
+  <!-- links from entity to its components -->
+  <g stroke="url(#pyGradient)" stroke-width="3" stroke-linecap="round">
+    <line x1="82" y1="80" x2="82" y2="46"/>
+    <line x1="82" y1="80" x2="52" y2="104"/>
+    <line x1="82" y1="80" x2="112" y2="104"/>
+  </g>
+
+  <!-- component squares -->
+  <g fill="url(#pyGradient)">
+    <rect x="72" y="34" width="20" height="20" rx="4"/>
+    <rect x="36" y="98" width="20" height="20" rx="4"/>
+    <rect x="108" y="98" width="20" height="20" rx="4"/>
+  </g>
+
+  <!-- the entity itself -->
+  <circle cx="82" cy="80" r="12" fill="#2B2118" stroke="url(#pyGradient)" stroke-width="4"/>
+</svg>
