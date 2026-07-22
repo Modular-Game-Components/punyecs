@@ -11,18 +11,15 @@ Here is a small example to illustrate the above:
 
 .. code-block:: python
 
-   from dataclasses import dataclass
    from punyecs import World, requirements, Trait, give_traits
    
    w = World()
    Pos = Trait(x=0.0, y = 0.0)
    
-   @dataclass
    @give_traits(Pos)
    class Player:
        pass
 
-   @dataclass
    @give_traits(Pos, override={"x": 1.0, "y": 1.0)
    class Enemy:
        pass
@@ -111,23 +108,19 @@ To illustrate this consider:
 
 .. code-block:: python
 
-   from dataclasses import dataclass
    from punyecs import World, requirements, Trait, give_traits, c, exattr
 
    w = World()
    Pos = Trait(x=0.0, y=0.0)
 
-   @dataclass
    @give_traits(Pos)
    class Player:
        pass
 
-   @dataclass
    @give_traits(Pos, override={"x": 1.0, "y": 1.0})
    class Enemy:
        pass
 
-   @dataclass
    @give_traits(Pos, override={"x": 3.0, "y": 3.0})
    class Wiggler:
        wiggle: lambda x: x + 2
@@ -171,17 +164,14 @@ Consider this simple setup:
 
 .. code-block:: python
 
-   from dataclasses import dataclass
    from punyecs import World, one_shot, Trait, give_traits, c
 
    Pos = Trait(x=0, y=0, z=0)
 
-   @dataclass
    @give_traits(Pos, exclude={"z"})
    class Player:
        pass
 
-   @dataclass
    @give_traits(Pos)
    class Enemy:
        pass

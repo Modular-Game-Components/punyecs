@@ -104,7 +104,6 @@ def exattr(trait, name):
 # Create the "cursor" singleton.
 c = c()
 
-
 def give_traits(*traits: Trait, exclude=None, override=None):
     """Use as a class decorator. Given a dictionary of attribute name to value
     pairs, set attributes of every object to include those as attributes.
@@ -117,6 +116,7 @@ def give_traits(*traits: Trait, exclude=None, override=None):
     to None.
     """
     def wrapper(cls):
+        cls = dataclass(cls)
         nonlocal exclude
         nonlocal override
         if exclude is None:

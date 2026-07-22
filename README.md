@@ -29,18 +29,15 @@ Instead of requiring inheritance, one can specify which attributes to operate on
 Here is a small example to illustrate the above:
 
 ```py
-from dataclasses import dataclass
 from punyecs import World, requirements, Trait, give_traits
 
 w = World()
 Pos = Trait(x=0.0, y=0.0)
 
-@dataclass
 @give_traits(Pos)
 class Player:
     pass
 
-@dataclass
 @give_traits(Pos, override={"x": 1.0, "y": 1.0})
 class Enemy:
     pass
@@ -89,23 +86,19 @@ For instance, we may have many different kinds of creatures. Most can follow the
 To illustrate this consider:
 
 ```py
-from dataclasses import dataclass
 from punyecs import World, requirements, Trait, give_traits, c, exattr
 
 w = World()
 Pos = Trait(x=0.0, y=0.0)
 
-@dataclass
 @give_traits(Pos)
 class Player:
     pass
 
-@dataclass
 @give_traits(Pos, override={"x": 1.0, "y": 1.0})
 class Enemy:
     pass
 
-@dataclass
 @give_traits(Pos, override={"x": 3.0 "y": 3.0})
 class Wiggler:
     wiggle = lambda x: x + 2

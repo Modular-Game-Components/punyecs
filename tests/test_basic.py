@@ -1,6 +1,5 @@
 # pyrefly: ignore-errors
 
-from dataclasses import dataclass
 from punyecs import World, Trait, requirements, one_shot, give_traits, exattr, c, not_
 
 
@@ -8,12 +7,10 @@ def test_query():
     w = World()
     Pos = Trait(x=0.0, y=0.0)
 
-    @dataclass
     @give_traits(Pos)
     class Player:
         pass
 
-    @dataclass
     @give_traits(Pos)
     class Enemy:
         pass
@@ -50,12 +47,10 @@ def test_requirement():
     w = World()
     Pos = Trait(x=0.0, y=0.0)
 
-    @dataclass
     @give_traits(Pos)
     class Player:
         pass
 
-    @dataclass
     @give_traits(Pos)
     class Enemy:
         pass
@@ -92,12 +87,10 @@ def test_exclude_attr_query():
     w = World()
     Pos = Trait(x=0.0, y=0.0)
 
-    @dataclass
     @give_traits(Pos)
     class Player:
         controller: bool = True
 
-    @dataclass
     @give_traits(Pos)
     class Enemy:
         pass
@@ -135,12 +128,10 @@ def test_exclude_attr_val_req():
     w = World()
     Pos = Trait(x=0.0, y=0.0)
 
-    @dataclass
     @give_traits(Pos)
     class Player:
         controller: bool = True
 
-    @dataclass
     @give_traits(Pos)
     class Enemy:
         pass
@@ -179,12 +170,10 @@ def test_one_shot():
     w = World()
     Pos = Trait(x=0.0, y=0.0, z=0.0)
     
-    @dataclass
     @give_traits(Pos, exclude={"z"})
     class Player:
         pass
 
-    @dataclass
     @give_traits(Pos)
     class Enemy:
         pass
@@ -220,17 +209,14 @@ def test_one_shot():
 def test_inject_attrs():
     Pos = Trait(x=0, y=0, z=0)
 
-    @dataclass
     @give_traits(Pos, exclude={"z"})
     class Player:
         pass
 
-    @dataclass
     @give_traits(Pos, override={"x": 1})
     class Enemy:
         pass
 
-    @dataclass
     @give_traits(Pos)
     class Rock:
         pass
