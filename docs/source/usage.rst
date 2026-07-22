@@ -23,7 +23,7 @@ Here is a small example to illustrate the above:
        pass
 
    @dataclass
-   @give_traits(Pos)
+   @give_traits(Pos, override={"x": 1.0, "y": 1.0)
    class Enemy:
        pass
 
@@ -32,21 +32,17 @@ Here is a small example to illustrate the above:
        e.x += 0.1
        e.y += 0.1
 
-   player = Player(0.0, 0.0)
-   enemy = Enemy(1.0, 1.0)
+   player = Player()
+   enemy = Enemy()
    w.add(player)
    w.add(enemy)
 
    w.update(1)
-   print(player.x)
-   # Prints 0.1
-   print(player.y)
-   # Prints 0.1
+   print(player.x) # Prints 0.1
+   print(player.y) # Prints 0.1
 
-   print(enemy.x)
-   # Prints 1.1
-   print(enemy.y)
-   # Prints 1.1
+   print(enemy.x) # Prints 1.1
+   print(enemy.y) # Prints 1.1
 
 Be sure to read the comments! Observe the ``move`` function operates on *both* ``Player`` and ``Enemy`` even though they are unrelated.
 
@@ -127,12 +123,12 @@ To illustrate this consider:
        pass
 
    @dataclass
-   @give_traits(Pos)
-   class WalkingEnemy:
+   @give_traits(Pos, override={"x": 1.0, "y": 1.0})
+   class Enemy:
        pass
 
    @dataclass
-   @give_traits(Pos)
+   @give_traits(Pos, override={"x": 3.0, "y": 3.0})
    class Wiggler:
        wiggle: lambda x: x + 2
 
@@ -147,32 +143,26 @@ To illustrate this consider:
        e.y = wiggle(e.y)
 
 
-   player = Player(0.0, 0.0)
-   enemy = Enemy(1.0, 1.0)
-   wiggler = Wiggle(3.0, 3.0)
+   player = Player()
+   enemy = Enemy()
+   wiggler = Wiggle()
    w.add(player)
    w.add(enemy)
    w.add(wiggler)
 
    w.update(1)
-   print(player.x)
-   # Prints 0.1
-   print(player.y)
-   # Prints 0.1
+   print(player.x) # Prints 0.1
+   print(player.y) # Prints 0.1
 
-   print(enemy.x)
-   # Prints 1.1
-   print(enemy.y)
-   # Prints 1.1
+   print(enemy.x) # Prints 1.1
+   print(enemy.y) # Prints 1.1
 
-   print(wiggler.x)
-   # Prints 5.0
-   print(wiggler.y)
-   # Prints 5.0
+   print(wiggler.x) # Prints 5.0
+   print(wiggler.y) # Prints 5.0
 
------------------------------------
-Refinements on Updating: `one_shot`
------------------------------------
+-------------------------------------
+Refinements on Updating: ``one_shot``
+-------------------------------------
 
 `update` is often used in ECS, but what if you do not want to update every group? Furthermore, `update` is often in the gameloop, but what if you need to invoke a function on a bunch of objects outside the gameloop? This is where the
 `one_shot` decorator comes into play.
@@ -200,9 +190,9 @@ Consider this simple setup:
    def inc_x(e):
        e.x += 1
 
-   e1 = Enemy(0, 0, 0)
-   e2 = Enemy(0, 0, 0)
-   p1 = Player(0, 0)
+   e1 = Enemy()
+   e2 = Enemy()
+   p1 = Player()
 
    w.add(e1)
    w.add(e2)
