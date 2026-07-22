@@ -3,11 +3,17 @@ import operator
 from typing import Any, Callable
 
 def register_unary_op(op):
+    """Make a unary operation usable as a subject_to Constraint.
+    :param op: The operation to convert.
+    """
     def f(self):
         return Constraint(unary_op=op, val1=self)
     return f
 
 def register_bin_op(op):
+    """Make a binary operation usable as a subject_to Constraint.
+    :param op: The operation to convert.
+    """
     def f(self, other):
         if not isinstance(other, c):
             other = Const(other)
@@ -15,6 +21,9 @@ def register_bin_op(op):
     return f
 
 def not_(self):
+    """Cannot override ``not``, so ``not_`` is used to make negations of
+    Contraints.
+    """
     return Constraint(unary_op=lambda ob: not ob, val1=self)
 
 @dataclass
@@ -57,6 +66,7 @@ class c:
 
 @dataclass
 class Const:
+    """Wrapper for constant values in subject_to queries."""
     val: Any
 
     def eval(self):
@@ -64,6 +74,10 @@ class Const:
 
 @dataclass
 class Constraint:
+    """The kind of object supplied to a ``subject_to`` arguments of 
+    decorator functions.
+    """
+
     unary_op: Callable[[Any], Any] | None = None
     bin_op: Callable[[Any, Any], Any] | None = None
     val1: c | Const | None = None
@@ -81,6 +95,9 @@ class Constraint:
             return self.bin_op(self.val1.eval(), self.val2.eval())
 
 class Trait:
+    """A collection of attributes along with their values that other classes
+    can be given.
+    """
     def __init__(self, **kwargs):
         self._fields = kwargs
 
@@ -94,10 +111,16 @@ class Trait:
 
 def ex_attr(obj, name):
     """Exclude a property in a subject_to clause.
+    :param obj: The obj to exclude a property from.
+    :param name: The name of the property.
     """
     return Constraint(bin_op=lambda o, n: not hasattr(o, n), val1=obj, val2=Const(name))
 
 def has_attr(obj, name):
+    """Check if a property has an attribute in a subject_to constraint.
+    :param obj: The object to check.
+    :param name: The name of the property to check.
+    """
     return Constraint(bin_op=lambda o, n: hasattr(o, n), val1=obj, val2=Const(name))
 
 
@@ -162,6 +185,10 @@ def entity_satisfies_query(entity, query) -> bool:
 
 @dataclass
 class World:
+    """A class that represents a world that applies to changes to the objects
+    it governs. (Particularly with ``.update(...)`` method.
+    """
+
     groups: list[tuple[Query, list, list[Callable[[Any, float], None]]]] = \
             field(default_factory=list)
 

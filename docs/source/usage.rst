@@ -61,7 +61,7 @@ Be sure to read the comments! Observe the ``move`` function operates on *both* `
 Fine Grained Control: Querying
 ------------------------------
 
-Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the player object. We can avoid influencing the player object by putting it in the excluded objects list. The function ``move`` becomes:
+Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the player object. We can avoid influencing the player object by using the ``c`` "constraint former" and exclude objects that are the ``player``. The function ``move`` becomes:
 
 .. code-block:: python
 
@@ -102,9 +102,7 @@ Excluding based on the singular value of an attribute still might not be enough 
 Excluding Based on Attributes
 -----------------------------
 
-We may not care what value the attribute is and simply want to exclude the object if it *has* that attribute. For instance, we may have many different kinds of creatures. Most can follow the usual movement update function, but some creatures have a ``wiggle`` attribute. ``wiggle`` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles.
-
-To illustrate this consider:
+We may not care what value the attribute is and simply want to exclude the object if it *has* that attribute. For instance, we may have many different kinds of creatures. Most can follow the usual movement update function, but some creatures have a ``wiggle`` attribute. ``wiggle`` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles. We can use the ``ex_attr`` function to create a ``subject_to`` constraint as follows:
 
 .. code-block:: python
 
@@ -157,8 +155,8 @@ To illustrate this consider:
 Refinements on Updating: ``one_shot``
 -------------------------------------
 
-`update` is often used in ECS, but what if you do not want to update every group? Furthermore, `update` is often in the gameloop, but what if you need to invoke a function on a bunch of objects outside the gameloop? This is where the
-`one_shot` decorator comes into play.
+``update`` is often used in ECS, but what if you do not want to update every group? Furthermore, ``update`` is often in the gameloop, but what if you need to invoke a function on a bunch of objects outside the gameloop? This is where the
+``one_shot`` decorator comes into play.
 
 Consider this simple setup:
 
