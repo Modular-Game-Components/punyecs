@@ -185,6 +185,7 @@ def entity_satisfies_query(entity, query) -> bool:
     if not query.constraint.eval():
         c._obj = None
         return False
+    c._obj = None
     return True
 
 @dataclass
