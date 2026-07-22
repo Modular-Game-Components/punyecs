@@ -175,7 +175,7 @@ class Query:
     and_attr: Trait
     constraint: Constraint | None = None
 
-def entity_satisfies_query(entity, query) -> bool:
+def entity_satisfies_query(entity: Any, query: Query) -> bool:
     """Check if an entity should (or should not) be added to a particular
     group by analyzing the query structure.
 
