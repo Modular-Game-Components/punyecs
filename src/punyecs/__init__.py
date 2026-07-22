@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import operator
 from typing import Any, Callable
 
-def register_unary_op(op):
+def register_unary_op(op: Callable[[Any], Any]):
     """Make a unary operation usable as a subject_to Constraint.
     :param op: The operation to convert.
     """
@@ -10,7 +10,7 @@ def register_unary_op(op):
         return Constraint(unary_op=op, val1=self)
     return f
 
-def register_bin_op(op):
+def register_bin_op(op: Callable[[Any, Any], Any]):
     """Make a binary operation usable as a subject_to Constraint.
     :param op: The operation to convert.
     """
@@ -20,7 +20,7 @@ def register_bin_op(op):
         return Constraint(bin_op=op, val1=self, val2=other)
     return f
 
-def not_(self):
+def not_(self: Any):
     """Cannot override ``not``, so ``not_`` is used to make negations of
     Contraints.
     """
@@ -30,7 +30,7 @@ def not_(self):
 class c:
     _obj: Any = None
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         def get(o, n):
             try:
                 return getattr(o, n)
@@ -38,10 +38,10 @@ class c:
                 return False
         return Constraint(bin_op=lambda o, n: get(o, n), val1=self, val2=Const(name))
 
-    def is_(self, other):
+    def is_(self, other: Any):
         return Constraint(bin_op=lambda ob, ot: ob is ot, val1=self, val2=Const(other))
 
-    def isnot(self, other):
+    def isnot(self, other: Any):
         return Constraint(bin_op=lambda ob, ot: ob is not ot, val1=self, val2=Const(other))
 
     def eval(self):
@@ -79,6 +79,8 @@ class Constraint:
             return self.bin_op(self.val1.eval(), self.val2.eval())
 
     __neg__ = register_unary_op(operator.__neg__)
+
+    # Not logical not, this is bitwise inversion! Use ``not_`` instead for logical!
     __invert__ = register_unary_op(operator.__invert__)
     __abs__ = register_unary_op(operator.__abs__)
 
@@ -250,7 +252,7 @@ def requirements(world: World,
     :param require: Required attribute for an entity to be ran.
     :subject_to: A Constraint object that the object must satisfy.
     """
-    def req_dec(func):
+    def req_dec(func: Callable[[Any, float], None]):
         query = Query(require, subject_to)
         group = world.push_group(query)
         def inner(e, dt):
@@ -272,7 +274,7 @@ def one_shot(world: World,
     :param require: Required attribute for an entity to be ran.
     :param subject_to: A Constraint object that the object must satisfy.
     """
-    def req_dec(func):
+    def req_dec(func: Callable[[Any], None]):
         query = Query(require, subject_to)
         group = world.push_group(query)
         def inner():
