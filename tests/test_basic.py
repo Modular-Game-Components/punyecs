@@ -1,35 +1,35 @@
 from dataclasses import dataclass
-from punyecs import World, Query, query, requirements, one_shot, inject_attrs
+from punyecs import World, Trait, requirements, one_shot, give_traits, ex_attr
 
 
 def test_query():
     w = World()
-    q = Query(and_attr={"x", "y"})
+    Pos = Trait(x=0.0, y=0.0)
 
     @dataclass
+    @give_traits(Pos)
     class Player:
-        x: float
-        y: float
+        pass
 
     @dataclass
+    @give_traits(Pos)
     class Enemy:
-        x: float
-        y: float
+        pass
 
-    @query(w, q)
+    @requirements(w, Pos)
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
 
-    player = Player(0.0, 0.0)
-    enemy = Enemy(0.0, 0.0)
+    player = Player()
+    enemy = Enemy()
     w.add(player)
     w.add(enemy)
 
-    assert player.x == 0
-    assert player.y == 0
-    assert enemy.x == 0
-    assert enemy.y == 0
+    assert player.x == 0.0
+    assert player.y == 0.0
+    assert enemy.x == 0.0
+    assert enemy.y == 0.0
 
 
     w.update(1)
@@ -46,24 +46,25 @@ def test_query():
 
 def test_requirement():
     w = World()
+    Pos = Trait(x=0.0, y=0.0)
 
     @dataclass
+    @give_traits(Pos)
     class Player:
-        x: float
-        y: float
+        pass
 
     @dataclass
+    @give_traits(Pos)
     class Enemy:
-        x: float
-        y: float
+        pass
 
-    @requirements(w, {"x", "y"})
+    @requirements(w, Pos)
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
 
-    player = Player(0.0, 0.0)
-    enemy = Enemy(0.0, 0.0)
+    player = Player()
+    enemy = Enemy()
     w.add(player)
     w.add(enemy)
 
@@ -85,70 +86,24 @@ def test_requirement():
     assert enemy.x == 0.2
     assert enemy.y == 0.2
 
-def test_exclude_attr():
-    w = World()
-
-    @dataclass
-    class Player:
-        x: float
-        y: float
-
-    @dataclass
-    class Enemy:
-        x: float
-        y: float
-
-    player = Player(0.0, 0.0)
-    enemy = Enemy(0.0, 0.0)
-
-    q = Query(and_attr={"x", "y"}, exclude_objs=[player])
-
-    @query(w, q)
-    def f(e, dt):
-        e.x += 0.1
-        e.y += 0.1
-
-    w.add(player)
-    w.add(enemy)
-
-    assert player.x == 0.0
-    assert player.y == 0.0
-    assert enemy.x == 0.0
-    assert enemy.y == 0.0
-
-
-    w.update(1)
-    assert player.x == 0.0
-    assert player.y == 0.0
-    assert enemy.x == 0.1
-    assert enemy.y == 0.1
-
-    w.update(1)
-    assert player.x == 0.0
-    assert player.y == 0.0
-    assert enemy.x == 0.2
-    assert enemy.y == 0.2
-
 def test_exclude_attr_val_query():
     w = World()
+    Pos = Trait(x=0.0, y=0.0)
 
     @dataclass
+    @give_traits(Pos)
     class Player:
-        x: float
-        y: float
         controller: bool = True
 
     @dataclass
+    @give_traits(Pos)
     class Enemy:
-        x: float
-        y: float
+        pass
 
-    player = Player(0.0, 0.0)
-    enemy = Enemy(0.0, 0.0)
+    player = Player()
+    enemy = Enemy()
 
-    q = Query(and_attr={"x", "y"}, exclude_attr_vals={"controller": True})
-
-    @query(w, q)
+    @requirements(w, Pos, subject_to=ex_attr(Pos, "controller"))
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
@@ -176,22 +131,22 @@ def test_exclude_attr_val_query():
 
 def test_exclude_attr_val_req():
     w = World()
+    Pos = Trait(x=0.0, y=0.0)
 
     @dataclass
+    @give_traits(Pos)
     class Player:
-        x: float
-        y: float
         controller: bool = True
 
     @dataclass
+    @give_traits(Pos)
     class Enemy:
-        x: float
-        y: float
+        pass
 
-    player = Player(0.0, 0.0)
-    enemy = Enemy(0.0, 0.0)
+    player = Player()
+    enemy = Enemy()
 
-    @requirements(w, {"x", "y"}, exclude_attr_vals={"controller": True})
+    @requirements(w, Pos, subject_to=ex_attr(Pos, "controller"))
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
@@ -220,58 +175,61 @@ def test_exclude_attr_val_req():
 
 def test_one_shot():
     w = World()
+    Pos = Trait(x=0.0, y=0.0, z=0.0)
     
     @dataclass
+    @give_traits(Pos, exclude={"z"})
     class Player:
-        x: int
-        y: int
+        pass
 
     @dataclass
+    @give_traits(Pos)
     class Enemy:
-        x: int
-        y: int
-        z: int
+        pass
 
-    @one_shot(w, {"x", "y", "z"})
+    @one_shot(w, Pos)
     def inc_x(e):
         e.x += 1
 
-    e1 = Enemy(0, 0, 0)
-    e2 = Enemy(0, 0, 0)
-    p1 = Player(0, 0)
+    e1 = Enemy()
+    e2 = Enemy()
+    p1 = Player()
 
     w.add(e1)
     w.add(e2)
     w.add(p1)
 
-    assert(e1.x == 0)
-    assert(e2.x == 0)
-    assert(p1.x == 0)
+    assert(e1.x == 0.0)
+    assert(e2.x == 0.0)
+    assert(p1.x == 0.0)
 
     inc_x()
 
-    assert(e1.x == 1)
-    assert(e2.x == 1)
-    assert(p1.x == 0)
+    assert(e1.x == 1.0)
+    assert(e2.x == 1.0)
+    assert(p1.x == 0.0)
 
     inc_x()
 
-    assert(e1.x == 2)
-    assert(e2.x == 2)
-    assert(p1.x == 0)
+    assert(e1.x == 2.0)
+    assert(e2.x == 2.0)
+    assert(p1.x == 0.0)
 
 def test_inject_attrs():
-    coords = {"x": 0, "y": 0, "z": 0}
+    Pos = Trait(x=0, y=0, z=0)
 
-    @inject_attrs(coords, exclude={"z"})
+    @dataclass
+    @give_traits(Pos, exclude={"z"})
     class Player:
         pass
 
-    @inject_attrs(coords, override={"x": 1})
+    @dataclass
+    @give_traits(Pos, override={"x": 1})
     class Enemy:
         pass
 
-    @inject_attrs(coords)
+    @dataclass
+    @give_traits(Pos)
     class Rock:
         pass
 
