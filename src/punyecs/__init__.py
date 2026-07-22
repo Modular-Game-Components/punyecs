@@ -21,9 +21,6 @@ def not_(self):
 class c:
     _obj: Any = None
 
-    def __hasattr__(self, name):
-        return Constraint(bin_op=lambda o, n: hasattr(o, n), val1=self, val2=Const(name))
-
     def __getattr__(self, name):
         def get(o, n):
             try:
@@ -95,10 +92,14 @@ class Trait:
         return self._fields | other._fields
 
 
-def exattr(trait, name):
+def ex_attr(obj, name):
     """Exclude a property in a subject_to clause.
     """
-    return Constraint(bin_op=lambda o, n: not hasattr(o, n), val1=trait, val2=Const(name))
+    return Constraint(bin_op=lambda o, n: not hasattr(o, n), val1=obj, val2=Const(name))
+
+def has_attr(obj, name):
+    return Constraint(bin_op=lambda o, n: hasattr(o, n), val1=obj, val2=Const(name))
+
 
 # pyrefly: ignore
 # Create the "cursor" singleton.

@@ -1,6 +1,6 @@
 # pyrefly: ignore-errors
 
-from punyecs import World, Trait, requirements, one_shot, give_traits, exattr, c, not_
+from punyecs import World, Trait, requirements, one_shot, give_traits, ex_attr, has_attr, c, not_
 
 
 def test_query():
@@ -98,7 +98,7 @@ def test_exclude_attr_query():
     player = Player()
     enemy = Enemy()
 
-    @requirements(w, Pos, subject_to=exattr(c, "controller"))
+    @requirements(w, Pos, subject_to=ex_attr(c, "controller"))
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
