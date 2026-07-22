@@ -111,6 +111,7 @@ class Trait:
 
 def ex_attr(obj, name):
     """Exclude a property in a subject_to clause.
+
     :param obj: The obj to exclude a property from.
     :param name: The name of the property.
     """
@@ -118,6 +119,7 @@ def ex_attr(obj, name):
 
 def has_attr(obj, name):
     """Check if a property has an attribute in a subject_to constraint.
+
     :param obj: The object to check.
     :param name: The name of the property to check.
     """
@@ -134,9 +136,10 @@ def give_traits(*traits: Trait, exclude=None, override=None):
     Furthermore, if exclude is supplied, do *not* include those attributes.
     Lastly, if you want to customize the value of an attribute, you may
     override the supplied value with an override dictionary.
-    :param attr_vals The attribute to value dictionary.
-    :param exclude The attributes to exclude from injection. Defaults to None.
-    :param override The attributes to override their default values. Defaults
+
+    :param *traits: The attribute to value dictionary.
+    :param exclude: The attributes to exclude from injection. Defaults to None.
+    :param override: The attributes to override their default values. Defaults
     to None.
     """
     def wrapper(cls):
