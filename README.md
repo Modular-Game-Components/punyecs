@@ -41,7 +41,7 @@ class Player:
     pass
 
 @dataclass
-@give_traits(Pos)
+@give_traits(Pos, override={"x": 1.0, "y": 1.0})
 class Enemy:
     pass
 
@@ -50,8 +50,8 @@ def move(e, dt):
     e.x += 0.1
     e.y += 0.1
 
-player = Player(0.0, 0.0)
-enemy = Enemy(1.0, 1.0)
+player = Player()
+enemy = Enemy()
 w.add(player)
 w.add(enemy)
 
