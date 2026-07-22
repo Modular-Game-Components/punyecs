@@ -119,7 +119,7 @@ def move(e, dt):
     e.x += 0.1
     e.y += 0.1
 
-@requirements(w, Pos + Trait("wiggle"=None))
+@requirements(w, Pos + Trait(wiggle=None))
 def wiggle(e, dt):
     e.x = wiggle(e.x)
     e.y = wiggle(e.y)
