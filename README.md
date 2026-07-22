@@ -56,15 +56,11 @@ w.add(player)
 w.add(enemy)
 
 w.update(1)
-print(player.x)
-# Prints 0.1
-print(player.y)
-# Prints 0.1
+print(player.x) # Prints 0.1
+print(player.y) # Prints 0.1
 
-print(enemy.x)
-# Prints 1.1
-print(enemy.y)
-# Prints 1.1
+print(enemy.x) # Prints 1.1
+print(enemy.y) # Prints 1.1
 ```
 
 # A Bit More Sophistication
@@ -133,20 +129,14 @@ w.add(enemy)
 w.add(wiggler)
 
 w.update(1)
-print(player.x)
-# Prints 0.1
-print(player.y)
-# Prints 0.1
+print(player.x) # Prints 0.1
+print(player.y) # Prints 0.1
 
-print(enemy.x)
-# Prints 1.1
-print(enemy.y)
-# Prints 1.1
+print(enemy.x) # Prints 1.1
+print(enemy.y) # Prints 1.1
 
-print(wiggler.x)
-# Prints 5.0
-print(wiggler.y)
-# Prints 5.0
+print(wiggler.x) # Prints 5.0
+print(wiggler.y) # Prints 5.0
 ```
 
 Thus, `move` does not operate on `wiggler` but `wiggle` does.
