@@ -14,6 +14,9 @@ def register_bin_op(op):
         return Constraint(bin_op=op, val1=self, val2=other)
     return f
 
+def not_(self):
+    return Constraint(unary_op=lambda ob: not ob, val1=self)
+
 @dataclass
 class c:
     _obj: Any = None
@@ -22,13 +25,18 @@ class c:
         return Constraint(lambda o, n: hasattr(o, n), val1=self, val2=Const(name))
 
     def __getattr__(self, name):
-        return Constraint(lambda o, n: getattr(o, n), val1=self, val2=Const(name))
+        def get(o, n):
+            try:
+                return getattr(o, n)
+            except AttributeError:
+                return False
+        return Constraint(bin_op=lambda o, n: get(o, n), val1=self, val2=Const(name))
 
     def is_(self, other):
-        return Constraint(lambda ob, ot: ob is ot, val1=self, val2=Const(other))
+        return Constraint(bin_op=lambda ob, ot: ob is ot, val1=self, val2=Const(other))
 
     def isnot(self, other):
-        return Constraint(lambda ob, ot: ob is not ot, val1=self, val2=Const(other))
+        return Constraint(bin_op=lambda ob, ot: ob is not ot, val1=self, val2=Const(other))
 
     def eval(self):
         return self._obj
