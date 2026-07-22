@@ -78,6 +78,10 @@ class Constraint:
             assert(self.val2 is not None)
             return self.bin_op(self.val1.eval(), self.val2.eval())
 
+    __neg__ = register_unary_op(operator.__neg__)
+    __invert__ = register_unary_op(operator.__invert__)
+    __abs__ = register_unary_op(operator.__abs__)
+
     __add__ = register_bin_op(operator.__add__)
     __radd__ = register_bin_op(operator.__add__)
     __sub__ = register_bin_op(operator.__sub__)
