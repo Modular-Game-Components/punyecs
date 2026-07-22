@@ -101,12 +101,12 @@ class Player:
     pass
 
 @dataclass
-@give_traits(Pos)
+@give_traits(Pos, override={"x": 1.0, "y": 1.0})
 class Enemy:
     pass
 
 @dataclass
-@give_traits(Pos)
+@give_traits(Pos, override={"x": 3.0 "y": 3.0})
 class Wiggler:
     wiggle = lambda x: x + 2
 
@@ -121,9 +121,9 @@ def wiggle(e, dt):
     e.y = wiggle(e.y)
 
 
-player = Player(0.0, 0.0)
-enemy = Enemy(1.0, 1.0)
-wiggler = Wiggle(3.0, 3.0)
+player = Player()
+enemy = Enemy()
+wiggler = Wiggle()
 w.add(player)
 w.add(enemy)
 w.add(wiggler)
