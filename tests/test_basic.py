@@ -1,3 +1,5 @@
+# pyrefly: ignore-errors
+
 from dataclasses import dataclass
 from punyecs import World, Trait, requirements, one_shot, give_traits, exattr, c, not_
 

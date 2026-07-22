@@ -22,7 +22,7 @@ class c:
     _obj: Any = None
 
     def __hasattr__(self, name):
-        return Constraint(lambda o, n: hasattr(o, n), val1=self, val2=Const(name))
+        return Constraint(bin_op=lambda o, n: hasattr(o, n), val1=self, val2=Const(name))
 
     def __getattr__(self, name):
         def get(o, n):
@@ -51,6 +51,7 @@ class c:
     __rtruediv__ = register_bin_op(operator.__truediv__)
     __floordiv__ = register_bin_op(operator.__floordiv__)
     __rfloordiv__ = register_bin_op(operator.__floordiv__)
+    # pyrefly: ignore
     __eq__ = register_bin_op(operator.__eq__)
     __lt__ = register_bin_op(operator.__lt__)
     __gt__ = register_bin_op(operator.__gt__)
@@ -73,8 +74,13 @@ class Constraint:
 
     def eval(self):
         if self.val2 is None:
+            assert(self.unary_op is not None)
+            assert(self.val1 is not None)
             return self.unary_op(self.val1.eval())
         else:
+            assert(self.bin_op is not None)
+            assert(self.val1 is not None)
+            assert(self.val2 is not None)
             return self.bin_op(self.val1.eval(), self.val2.eval())
 
 class Trait:
@@ -94,7 +100,7 @@ def exattr(trait, name):
     """
     return Constraint(bin_op=lambda o, n: not hasattr(o, n), val1=trait, val2=Const(name))
 
-
+# pyrefly: ignore
 # Create the "cursor" singleton.
 c = c()
 
@@ -132,8 +138,8 @@ def give_traits(*traits: Trait, exclude=None, override=None):
 class Query:
     """A class that represnets which attributes and objects should be allowed
     (or disallowed) in a group."""
-    and_attr: set[str] = field(default_factory=set)
-    constraint: Constraint = None
+    and_attr: Trait
+    constraint: Constraint | None = None
 
 def entity_satisfies_query(entity, query) -> bool:
     """Check if an entity should (or should not) be added to a particular
