@@ -15,7 +15,7 @@ def register_bin_op(op):
     :param op: The operation to convert.
     """
     def f(self, other):
-        if not isinstance(other, c):
+        if not hasattr(other, "eval"):
             other = Const(other)
         return Constraint(bin_op=op, val1=self, val2=other)
     return f
