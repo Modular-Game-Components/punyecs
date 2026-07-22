@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from punyecs import World, Trait, requirements, one_shot, give_traits, ex_attr
+from punyecs import World, Trait, requirements, one_shot, give_traits, exattr, c
 
 
 def test_query():
@@ -103,7 +103,7 @@ def test_exclude_attr_val_query():
     player = Player()
     enemy = Enemy()
 
-    @requirements(w, Pos, subject_to=ex_attr(Pos, "controller"))
+    @requirements(w, Pos, subject_to=exattr(c, "controller"))
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1
@@ -146,7 +146,7 @@ def test_exclude_attr_val_req():
     player = Player()
     enemy = Enemy()
 
-    @requirements(w, Pos, subject_to=ex_attr(Pos, "controller"))
+    @requirements(w, Pos, subject_to=exattr(c, "controller"))
     def f(e, dt):
         e.x += 0.1
         e.y += 0.1

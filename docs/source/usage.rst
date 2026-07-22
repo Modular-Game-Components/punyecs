@@ -12,21 +12,22 @@ Here is a small example to illustrate the above:
 .. code-block:: python
 
    from dataclasses import dataclass
-   from punyecs import World, requirements
+   from punyecs import World, requirements, Trait, give_traits
    
    w = World()
+   Pos = Trait(x=0.0, y = 0.0)
    
    @dataclass
+   @give_traits(Pos)
    class Player:
-       x: float
-       y: float
+       pass
 
    @dataclass
+   @give_traits(Pos)
    class Enemy:
-       x: float
-       y: float
+       pass
 
-   @requirements(w, {"x", "y"})
+   @requirements(w, Pos)
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1
@@ -71,7 +72,7 @@ Returning to the example above, we may want various enemies to move like above b
 
 .. code-block:: python
 
-   @requirements(w, {"x", "y"}, exclude_objs=[player])
+   @requirements(w, Pos, subject_to=c.isnot(player))
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1
@@ -82,11 +83,12 @@ Then after every ``w.update(1)`` the ``player`` object *will still remain at* ``
 An Alternative: Exclude Based on a Value
 ----------------------------------------
 
-It could be that you have multiple characters that are controllable that are *not* the player. You could give them an attribute ``controller: bool = True``. Then exclude an object if it has the ``controller`` attribute *and* the ``controller`` attribute is ``True`` with ``exclude_attr_vals``. That is:
+It could be that you have multiple characters that are controllable that are *not* the player. You could give them an attribute ``controller: bool = True``. Then exclude an object if it has the ``controller`` attribute *and* the ``controller`` attribute is ``True`` with the following ``subject_to`` constraint:
 
 .. code-block:: python
+   from punyecs import c
 
-   @requirements(w, {"x", "y"}, exclude_attr_vals={"controller": True})
+   @requirements(w, Pos, subject_to=c.controller.is_(True))
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1
@@ -99,11 +101,9 @@ Excluding based on the singular value of an attribute still might not be enough 
 
 .. code-block:: python
 
-   @requirements(w, {"y"}, exclude_attr_funcs={"level": lambda lvl: lvl > 50})
+   @requirements(w, YAxis, subject_to=c.level > 50)
    def gravity(e):
        e.y -= GRAVITY
-
-The ``exclude_attr_funcs`` takes in a dictionary of attribute names and a function. This function takes one parameter, namely the attribute corresponding to the key. The function then determines if the attribute satisfies the predicate and, if so, excludes that entity from the group.
 
 -----------------------------
 Excluding Based on Attributes
@@ -116,32 +116,32 @@ To illustrate this consider:
 .. code-block:: python
 
    from dataclasses import dataclass
-   from punyecs import World, requirements
+   from punyecs import World, requirements, Trait, give_traits, c, exattr
 
    w = World()
+   Pos = Trait(x=0.0, y=0.0)
 
    @dataclass
+   @give_traits(Pos)
    class Player:
-       x: float
-       y: float
+       pass
 
    @dataclass
+   @give_traits(Pos)
    class WalkingEnemy:
-       x: float
-       y: float
+       pass
 
    @dataclass
+   @give_traits(Pos)
    class Wiggler:
-       x: float
-       y: float
        wiggle: lambda x: x + 2
 
-   @requirements(w, {"x", "y"}, exclude={"wiggle"})
+   @requirements(w, Pos, subject_to=exattr(c, "wiggle"))
    def move(e, dt):
        e.x += 0.1
        e.y += 0.1
 
-   @requirements(w, {"wiggle", "x", "y"})
+   @requirements(w, Pos, subject_to=hasattr(c, "wiggle"))
    def wiggle(e, dt):
        e.x = wiggle(e.x)
        e.y = wiggle(e.y)
@@ -182,20 +182,21 @@ Consider this simple setup:
 .. code-block:: python
 
    from dataclasses import dataclass
-   from punyecs import World, one_shot
+   from punyecs import World, one_shot, Trait, give_traits, c
 
-       @dataclass
-    class Player:
-        x: int
-        y: int
+   Pos = Trait(x=0, y=0, z=0)
 
-    @dataclass
-    class Enemy:
-        x: int
-        y: int
-        z: int
+   @dataclass
+   @give_traits(Pos, exclude={"x"})
+   class Player:
+       pass
 
-    @one_shot(w, {"x", "y", "z"})
+   @dataclass
+   @give_traits(Pos)
+   class Enemy:
+       pass
+
+    @one_shot(w, Pos)
     def inc_x(e):
         e.x += 1
 
@@ -216,45 +217,3 @@ What have we done? We've added one player and two enemies to a world `w`. Furthe
    >>> inc_x()
    >>> e1.x, e2.x, p1.x
    (1, 1, 0)
-
-=================================
-DRY in the Absence of Inheritance
-=================================
-
-One problem not addressed yet is "Don't Repeat Yourself" (DRY). One might notice that a benefit of using inheritance is that you do not need to retype inherited attritbutes. This "benefit" is more or less nullified with the punyecs decorator `inject_attrs`. `inject_attrs` takes a dictionary of attributes to value mappings and gives all of them to the decorated class objects. Not only that, but you can supply the optional arguments `exclude` and `override` to gain fine control over how the variables are injected. In particular, `exclude` is a set of attributes to *not* include, and `override` changes the values of the injected attributes to be a custom value. Here is an example of all these things at work:
-
-.. code-block:: python
-
-   coords = {"x": 0, "y": 0, "health": 2}
-
-   @inject_attrs(coords)
-   class Player:
-       pass
-
-   @inject_attrs(coords, override={"health": 1})
-   class Enemy:
-       pass
-   
-   @inject_attrs(coords, exclude={"health"})
-   class Rock:
-       pass
-
-Then, observe:
-
-.. code-block:: python
-
-   >>> player = Player()
-   >>> player.x
-   0
-   >>> player.y
-   0
-   >>> player.health
-   2
-   >>> enemy = Enemy()
-   >>> enemy.health
-   1
-   >>> rock = Rock()
-   >>> hasattr(rock, "health")
-   False
-
-So, as we can see, the `player` object is given (but *not through inheritance*) various properties. The `enemy` object has those attributes as well, but the health was *overridden* to be `1` instead of `2`. And `rock` gets all the attributes *except* the `health` attribute.

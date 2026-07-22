@@ -30,21 +30,22 @@ Here is a small example to illustrate the above:
 
 ```py
 from dataclasses import dataclass
-from punyecs import World, requirements
+from punyecs import World, requirements, Trait, give_traits
 
 w = World()
+Pos = Trait(x=0.0, y=0.0)
 
 @dataclass
+@give_traits(Pos)
 class Player:
-    x: float
-    y: float
+    pass
 
 @dataclass
+@give_traits(Pos)
 class Enemy:
-    x: float
-    y: float
+    pass
 
-@requirements(w, {"x", "y"})
+@requirements(w, Pos)
 def move(e, dt):
     e.x += 0.1
     e.y += 0.1
@@ -71,7 +72,11 @@ print(enemy.y)
 We may also do exclusions for fine grain control. Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the `player` object. We can avoid influencing the `player` object by putting it in the excluded objects list. The function `f` becomes:
 
 ```py
-@requirements(w, {"x", "y"}, exclude_objs=[player])
+from punyecs import c
+
+# ...
+
+@requirements(w, Pos, subject_to=c.isnot(player))
 def move(e, dt):
     e.x += 0.1
     e.y += 0.1
@@ -89,32 +94,32 @@ To illustrate this consider:
 
 ```py
 from dataclasses import dataclass
-from punyecs import World, requirements
+from punyecs import World, requirements, Trait, give_traits, c, exattr
 
 w = World()
+Pos = Trait(x=0.0, y=0.0)
 
 @dataclass
+@give_traits(Pos)
 class Player:
-    x: float
-    y: float
+    pass
 
 @dataclass
+@give_traits(Pos)
 class Enemy:
-    x: float
-    y: float
+    pass
 
 @dataclass
+@give_traits(Pos)
 class Wiggler:
-    x: float
-    y: float
-    wiggle: lambda x: x + 2
+    wiggle = lambda x: x + 2
 
-@requirements(w, {"x", "y"}, exclude={"wiggle"})
+@requirements(w, Pos, subject_to=exattr(c, "wiggle"))
 def move(e, dt):
     e.x += 0.1
     e.y += 0.1
 
-@requirements(w, {"wiggle", "x", "y"})
+@requirements(w, Pos + Trait("wiggle"=None))
 def wiggle(e, dt):
     e.x = wiggle(e.x)
     e.y = wiggle(e.y)

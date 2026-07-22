@@ -9,29 +9,29 @@ def register_unary_op(op):
 
 def register_bin_op(op):
     def f(self, other):
-        if not isinstance(other, Var):
+        if not isinstance(other, c):
             other = Const(other)
         return Constraint(bin_op=op, val1=self, val2=other)
     return f
 
-def ex_attr(trait, name):
-    """Exclude a property in a subject_to clause.
-    """
-    return Constraint(bin_op=lambda o, n: not hasattr(o, n), val1=trait, val2=Const(name))
-
 @dataclass
-class Const:
-    val: Any
+class c:
+    _obj: Any = None
 
-    def eval(self, obj):
-        return self.val
+    def __hasattr__(self, name):
+        return Constraint(lambda o, n: hasattr(o, n), val1=self, val2=Const(name))
 
-@dataclass
-class Var:
-    name: str
+    def __getattr__(self, name):
+        return Constraint(lambda o, n: getattr(o, n), val1=self, val2=Const(name))
 
-    def eval(self, obj):
-        return getattr(obj, self.name)
+    def is_(self, other):
+        return Constraint(lambda ob, ot: ob is ot, val1=self, val2=Const(other))
+
+    def isnot(self, other):
+        return Constraint(lambda ob, ot: ob is not ot, val1=self, val2=Const(other))
+
+    def eval(self):
+        return self._obj
 
     __add__ = register_bin_op(operator.__add__)
     __radd__ = register_bin_op(operator.__add__)
@@ -50,31 +50,46 @@ class Var:
     __or__ = register_bin_op(operator.__or__)
 
 @dataclass
+class Const:
+    val: Any
+
+    def eval(self):
+        return self.val
+
+@dataclass
 class Constraint:
     unary_op: Callable[[Any], Any] | None = None
     bin_op: Callable[[Any, Any], Any] | None = None
-    val1: Var | Const | None = None
-    val2: Var | Const | None = None
+    val1: c | Const | None = None
+    val2: c | Const | None = None
 
-    def eval(self, obj):
+    def eval(self):
         if self.val2 is None:
-            return self.unary_op(self.val1.eval(obj))
+            return self.unary_op(self.val1.eval())
         else:
-            return self.bin_op(self.val1.eval(obj), self.val2.eval(obj))
+            return self.bin_op(self.val1.eval(), self.val2.eval())
 
 class Trait:
     def __init__(self, **kwargs):
-        for key, val in kwargs.items():
-            # NOTE: self._fields gives the original dictionary. But doing .fieldname gives a Var!
-            setattr(self, key, Var(key))
         self._fields = kwargs
 
     def __iter__(self):
         for key in self._fields.keys():
             yield key
 
-    def eval(self, obj):
-        return obj
+    def __add__(self, other):
+        return self._fields | other._fields
+
+
+def exattr(trait, name):
+    """Exclude a property in a subject_to clause.
+    """
+    return Constraint(bin_op=lambda o, n: not hasattr(o, n), val1=trait, val2=Const(name))
+
+
+# Create the "cursor" singleton.
+c = c()
+
 
 def give_traits(*traits: Trait, exclude=None, override=None):
     """Use as a class decorator. Given a dictionary of attribute name to value
@@ -124,7 +139,9 @@ def entity_satisfies_query(entity, query) -> bool:
             return False
     if query.constraint is None:
         return True
-    if not query.constraint.eval(entity):
+    c._obj = entity
+    if not query.constraint.eval():
+        c._obj = None
         return False
     return True
 
