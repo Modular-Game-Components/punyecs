@@ -21,6 +21,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "pygame-ce>=2.5.7",
     "pytest>=9.0.3",
 ]
 docs = [
