@@ -1,3 +1,5 @@
+# pyrefly: ignore-errors
+
 import random
 import pygame
 from punyecs import World, Trait, give_traits, requirements
