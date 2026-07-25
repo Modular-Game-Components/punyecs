@@ -79,7 +79,7 @@ Then after every `world.update(1)`, the `player` object *will still remain at* `
 
 # A Graphical Pygame Example
 
-<video src="./bouncing_balls.mp4" autoplay width="100%"></video>
+<video src="./bouncing_balls.mp4" autoplay loop muted playsinline width="100%"></video>
 
 Checkout out the `examples` folder for how to quickly make this!
 
