@@ -77,62 +77,13 @@ def move(e, dt):
 
 Then after every `world.update(1)`, the `player` object *will still remain at* `x=0.0`, `y=0.0`.
 
-# Even More Sophistication!
+# A Graphical Pygame Example
 
-It might be inconvenient to exclude *individual* objects if a large number of objects need to be excluded. `punyecs` provides a couple more filtering options. One way around this is to specify which attributes an object should *not* have.
+<p align="center">
+  <video src="bouncing_balls.mp4"></video>
+</p>
 
-For instance, we may have many different kinds of creatures. Most can follow the usual movement update function, but some creatures have a `wiggle` attribute. `wiggle` could be a Boolean, or even something more sophisticated like a function that describes how the creature wiggles.
-
-To illustrate this consider:
-
-```py
-from punyecs import World, requirements, Trait, give_traits, c, ex_attr, has_attr
-
-w = World()
-Pos = Trait(x=0.0, y=0.0)
-
-@give_traits(Pos)
-class Player:
-    pass
-
-@give_traits(Pos, override={"x": 1.0, "y": 1.0})
-class Enemy:
-    pass
-
-@give_traits(Pos, override={"x": 3.0, "y": 3.0})
-class Wiggler:
-    wiggle = lambda x: x + 2
-
-@requirements(w, Pos, subject_to=ex_attr(c, "wiggle"))
-def move(e, dt):
-    e.x += 0.1
-    e.y += 0.1
-
-@requirements(w, Pos, subject_to=has_attr(c, "wiggle"))
-def wiggle(e, dt):
-    e.x = wiggle(e.x)
-    e.y = wiggle(e.y)
-
-
-player = Player()
-enemy = Enemy()
-wiggler = Wiggle()
-w.add(player)
-w.add(enemy)
-w.add(wiggler)
-
-w.update(1)
-print(player.x) # Prints 0.1
-print(player.y) # Prints 0.1
-
-print(enemy.x) # Prints 1.1
-print(enemy.y) # Prints 1.1
-
-print(wiggler.x) # Prints 5.0
-print(wiggler.y) # Prints 5.0
-```
-
-Thus, `move` does not operate on `wiggler` but `wiggle` does.
+Checkout out the `examples` folder for how to quickly make this!
 
 # How does punyecs compare to Esper?
 
