@@ -79,7 +79,7 @@ Then after every `world.update(1)`, the `player` object *will still remain at* `
 
 # A Graphical Pygame Example
 
-https://github.com/Modular-Game-Components/punyecs/raw/refs/heads/main/bouncing_balls.mp4
+![](bouncing_balls.mp4)
 
 Checkout out the `examples` folder for how to quickly make this!
 
