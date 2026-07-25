@@ -80,7 +80,7 @@ Then after every `world.update(1)`, the `player` object *will still remain at* `
 # A Graphical Pygame Example
 
 <p align="center">
-  <video src="bouncing_balls.mp4"></video>
+  <video src="bouncing_balls.mp4" width=180></video>
 </p>
 
 Checkout out the `examples` folder for how to quickly make this!
