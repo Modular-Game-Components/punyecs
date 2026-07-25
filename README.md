@@ -81,7 +81,7 @@ Then after every `world.update(1)`, the `player` object *will still remain at* `
 
 https://github.com/user-attachments/assets/682ea45e-18a1-4d3e-9176-59686a80a524
 
-Checkout out the `examples` folder for how to quickly make this!
+Check out the `examples` folder!
 
 # How does punyecs compare to Esper?
 
