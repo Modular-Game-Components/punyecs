@@ -5,6 +5,7 @@
 # punyecs
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Modular-Game-Components/punyecs/pytest.yml)
+![PyPI Python Version](https://img.shields.io/pypi/pyversions/punyecs)
 
 `punyecs` is a tiny Entity Component System (ECS) inspired by [tiny-ecs](https://github.com/bakpakin/tiny-ecs) for Python. `punyecs` operates directly on class attributes as opposed to creating components along with querying mechanisms for fine grain control over which objects are operated on by systems similar to how tiny-ecs works on Lua tables. Decouple what an object can do from what it inherits.
 
@@ -62,7 +63,7 @@ print(enemy.y) # Prints 1.1
 
 # A Bit More Sophistication
 
-We may also do exclusions for fine grain control. Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the `player` object. We can avoid influencing the `player` object by putting it in the excluded objects list. The function `f` becomes:
+We may also do exclusions for fine grain control. Returning to the example above, we may want various enemies to move like above but instead want to allow controller input for the `player` object. We can avoid influencing the `player` object by using a querying DSL. The function `move` becomes:
 
 ```py
 from punyecs import c
@@ -90,7 +91,7 @@ Check out the `examples` folder!
 - **Esper** — you want a mature, widely-used, performance-oriented ECS, and you're comfortable with the classic "entities are IDs, components are separate objects" model.
 - **punyecs** — you want your entities to stay as normal Python objects (dataclasses you can pass around, inspect, and extend), you like declaring filters inline via `subject_to`, and you're building something small-to-medium where Esper's performance headroom isn't the deciding factor.
 
-For a more detailed comparisonn see [this section](https://punyecs.readthedocs.io/en/latest/esper.html) of the documentation.
+For a more detailed comparison see [this section](https://punyecs.readthedocs.io/en/latest/esper.html) of the documentation.
 
 # Documentation
 
