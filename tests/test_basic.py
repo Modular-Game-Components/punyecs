@@ -246,3 +246,34 @@ def test_inject_attrs():
     assert(rock.y == 0)
     # pyrefly: ignore[missing-attribute] 
     assert(rock.z == 0)
+
+def test_remove_stuff():
+    w = World()
+    Pos = Trait(x=0, y=0, z=0)
+
+    @give_traits(Pos)
+    class Enemy:
+        pass
+
+    @one_shot(w, Pos)
+    def inc_x(e):
+        e.x += 1
+
+    e1 = Enemy()
+    e2 = Enemy()
+    e3 = Enemy()
+
+    w.extend([e1, e2, e3])
+
+    inc_x()
+
+    assert(e1.x == 1)
+    assert(e2.x == 1)
+    assert(e3.x == 1)
+
+    w.remove(e2)
+    inc_x()
+
+    assert(e1.x == 2)
+    assert(e2.x == 1)
+    assert(e3.x == 2)

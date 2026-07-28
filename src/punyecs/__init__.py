@@ -230,6 +230,19 @@ class World:
         for entity in entities:
             self.add(entity)
 
+    def remove(self, *entities: Any) -> None:
+        """Remove any specified entities from the this world.
+        
+        :param *entities: The entities to be removed.
+        """
+        for entity in entities:
+            for group in self.groups:
+                for i, e in enumerate(group[1]):
+                    if e is entity:
+                        group[1].pop(i)
+                        break
+
+
     def update(self, dt: float):
         """Update the world (and all the corresponding groups/entities).
 
@@ -242,7 +255,7 @@ class World:
                     func(entity, dt)
 
 
-def requirements(world: World, 
+def requirements(world: World,
                  require: Trait,
                  subject_to: Constraint | None=None):
     """Use as a decorator, runs the decorated function on each entity that
