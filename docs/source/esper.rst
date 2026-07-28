@@ -38,14 +38,12 @@ In punyecs, the entity *is* your own object — a ``Player`` instance, not an ID
 
 .. code-block:: python
 
-   from dataclasses import dataclass
    from punyecs import World, requirements, Trait, give_traits
 
    w = World()
    Pos = Trait(x=0.0, y=0.0)
    Vel = Trait(vx=0.0, vy=0.0)
 
-   @dataclass
    @give_traits(Pos, Vel)
    class Player:
        pass
