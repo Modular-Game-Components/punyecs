@@ -237,18 +237,20 @@ class World:
             entity_dict["obj_name"] = entity.__name__
             entity_dict["cls_name"] = type(entity).__name__
             serialized["entities"].append(entity_dict)
-        json.dump(serialized, dest)
+        with open(dest, "w") as file:
+            json.dump(serialized, file)
 
     def deserialize(self, src: str):
         """Loads and initializes objects of JSON file to be the world.
 
         :param src: Relative path for JSON file to load world data from.
         """
-        entities = json.load(src)
-        for entity in entities["entities"]:
-            initialized_entity = globals()[entity["cls_name"]]
-            initialized_entity.__name__ = entity["obj_name"]
-            self.add(initialized_entity) 
+        with open(src, "r") as file:
+            entities = json.load(file)
+            for entity in entities["entities"]:
+                initialized_entity = globals()[entity["cls_name"]]
+                initialized_entity.__name__ = entity["obj_name"]
+                self.add(initialized_entity) 
 
     def extend(self, entities: list[Any]):
         """Add a collection of entities to the world.
