@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import json
 import operator
 from typing import Any, Callable
 
@@ -203,6 +204,8 @@ class World:
     groups: list[tuple[Query, list, list[Callable[[Any, float], None]]]] = \
             field(default_factory=list)
 
+    entities: list[Any] = field(default_factory=list)
+
     def push_group(self, query: Query):
         """Add the group and return that group.
 
@@ -218,9 +221,26 @@ class World:
 
         :param entity: The entity to add to the world.
         """
+        self.entities.append(entity)
         for query, group, funcs in self.groups:
             if entity_satisfies_query(entity, query):
                 group.append(entity)
+
+    def serialize(self, dest):
+        serialized = {"entities" : []}
+        for entity in self.entities:
+            entity_dict = entity.asdict()
+            entity_dict["obj_name"] = entity.__name__
+            entity_dict["cls_name"] = type(entity).__name__
+            serialized["entities"].append(entity_dict)
+        json.dump(serialized, dest)
+
+    def deserialize(self, src):
+        entities = json.load(src)
+        for entity in entities["entities"]:
+            initialized_entity = globals()[entity["cls_name"]]
+            initialized_entity.__name__ = entity["obj_name"]
+            self.add(initialized_entity) 
 
     def extend(self, entities: list[Any]):
         """Add a collection of entities to the world.
