@@ -226,7 +226,11 @@ class World:
             if entity_satisfies_query(entity, query):
                 group.append(entity)
 
-    def serialize(self, dest):
+    def serialize(self, dest: str) -> None:
+        """Serializes world objects in JSON file.
+        
+        :param dest: Relative path for JSON file to store world in.
+        """
         serialized = {"entities" : []}
         for entity in self.entities:
             entity_dict = entity.asdict()
@@ -235,7 +239,11 @@ class World:
             serialized["entities"].append(entity_dict)
         json.dump(serialized, dest)
 
-    def deserialize(self, src):
+    def deserialize(self, src: str):
+        """Loads and initializes objects of JSON file to be the world.
+
+        :param src: Relative path for JSON file to load world data from.
+        """
         entities = json.load(src)
         for entity in entities["entities"]:
             initialized_entity = globals()[entity["cls_name"]]
