@@ -45,8 +45,8 @@ class Enemy:
 
 @requirements(w, Pos)
 def move(e, dt):
-    e.x += 0.1
-    e.y += 0.1
+    e.x += 0.1 * dt
+    e.y += 0.1 * dt
 
 player = Player()
 enemy = Enemy()
@@ -72,8 +72,8 @@ from punyecs import c
 
 @requirements(w, Pos, subject_to=c.isnot(player))
 def move(e, dt):
-    e.x += 0.1
-    e.y += 0.1
+    e.x += 0.1 * dt
+    e.y += 0.1 * dt
 ```
 
 Then after every `world.update(1)`, the `player` object *will still remain at* `x=0.0`, `y=0.0`.
