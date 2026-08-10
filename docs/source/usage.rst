@@ -26,8 +26,8 @@ Here is a small example to illustrate the above:
 
    @requirements(w, Pos)
    def move(e, dt):
-       e.x += 0.1
-       e.y += 0.1
+       e.x += 0.1 * dt
+       e.y += 0.1 * dt
 
    player = Player()
    enemy = Enemy()
@@ -45,7 +45,7 @@ Be sure to read the comments! Observe the ``move`` function operates on *both* `
 
 .. note::
 
-   We pass ``1`` to ``w.update(...)`` because in the video game context we virtually always want to pass some change in time *per frame* of the object. To keep the example simple, we disregard this value, however, you should consider passing ``dt`` in the game context. (For example, in Pygame, a game loop might look something like:
+   We pass ``1`` to ``w.update(...)`` because in the video game context we virtually always want to pass some change in time *per frame* of the object. Passing ``dt`` is crucial in the context of game development. For example, in Pygame, a game loop might look something like:
 
    .. code-block:: python
 
@@ -67,8 +67,8 @@ Returning to the example above, we may want various enemies to move like above b
 
    @requirements(w, Pos, subject_to=c.isnot(player))
    def move(e, dt):
-       e.x += 0.1
-       e.y += 0.1
+       e.x += 0.1 * dt
+       e.y += 0.1 * dt
 
 Then after every ``w.update(1)`` the ``player`` object *will still remain at* ``x=0.0``, ``y=0.0``.
 
@@ -83,8 +83,8 @@ It could be that you have multiple characters that are controllable that are *no
 
    @requirements(w, Pos, subject_to=c.controller)
    def move(e, dt):
-       e.x += 0.1
-       e.y += 0.1
+       e.x += 0.1 * dt
+       e.y += 0.1 * dt
 
 ---------------------------------------------------
 An Extension: Exclude Based on Attribute Predicates
@@ -125,13 +125,13 @@ We may not care what value the attribute is and simply want to exclude the objec
 
    @requirements(w, Pos, subject_to=ex_attr(c, "wiggle"))
    def move(e, dt):
-       e.x += 0.1
-       e.y += 0.1
+       e.x += 0.1 * dt
+       e.y += 0.1 * dt
 
    @requirements(w, Pos, subject_to=has_attr(c, "wiggle"))
    def wiggle(e, dt):
-       e.x = wiggle(e.x)
-       e.y = wiggle(e.y)
+       e.x = wiggle(e.x) * dt
+       e.y = wiggle(e.y) * dt
 
 
    player = Player()
