@@ -73,8 +73,8 @@ This is where punyecs' newer ``subject_to`` query DSL earns its keep. In Esper, 
 .. code-block:: python
 
    @requirements(w, Pos, subject_to=c.level > 50)
-   def gravity(e):
-       e.y -= GRAVITY
+   def gravity(e, dt):
+       e.y -= GRAVITY * dt
 
 That's a real ergonomic win for filters you reuse often, at the cost of one more concept (the ``c`` proxy) to learn.
 
