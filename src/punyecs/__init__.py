@@ -1,3 +1,4 @@
+from collections import namedtuple
 from dataclasses import dataclass, field
 import json
 import operator
@@ -195,14 +196,15 @@ def entity_satisfies_query(entity: Any, query: Query) -> bool:
     c._obj = None
     return True
 
+Group = namedtuple('Group', ['query', 'entities', 'systems'])
+
 @dataclass
 class World:
     """A class that represents a world that applies to changes to the objects
     it governs. (Particularly with ``.update(...)`` method.
     """
 
-    groups: list[tuple[Query, list, list[Callable[[Any, float], None]]]] = \
-            field(default_factory=list)
+    groups: list[Group] = field(default_factory=list)
 
     entities: list[Any] = field(default_factory=list)
 
@@ -211,7 +213,7 @@ class World:
 
         :param query: The query to associate with the group.
         """
-        new_group = (query, [], [])
+        new_group = Group(query, [], [])
         self.groups.append(new_group)
         return new_group
 
@@ -267,9 +269,9 @@ class World:
         """
         for entity in entities:
             for group in self.groups:
-                for i, e in enumerate(group[1]):
+                for i, e in enumerate(group.entities):
                     if e is entity:
-                        group[1].pop(i)
+                        group.entities.pop(i)
                         break
 
 
@@ -279,9 +281,9 @@ class World:
         :param dt: The amount of time that elapsed. (Common for videogame 
            applications)
         """
-        for _, group, funcs in self.groups:
+        for _, entities, funcs in self.groups:
             for func in funcs:
-                for entity in group:
+                for entity in entities:
                     func(entity, dt)
 
 
@@ -300,7 +302,7 @@ def requirements(world: World,
         group = world.push_group(query)
         def inner(e, dt):
             return func(e, dt)
-        group[2].append(inner)
+        group.systems.append(inner)
         return inner
     return req_dec
 
@@ -321,7 +323,7 @@ def one_shot(world: World,
         query = Query(require, subject_to)
         group = world.push_group(query)
         def inner():
-            for entity in group[1]:
+            for entity in group.entities:
                 func(entity)
         return inner
     return req_dec
