@@ -82,7 +82,7 @@ Then after every `world.update(1)`, the `player` object *will still remain at* `
 
 https://github.com/user-attachments/assets/682ea45e-18a1-4d3e-9176-59686a80a524
 
-Check out the `examples` folder!
+Check out the `examples` folder or read a [step-by-step guide on how to make it!](https://punyecs.readthedocs.io/en/latest/pygame.html)
 
 # How does punyecs compare to Esper?
 
