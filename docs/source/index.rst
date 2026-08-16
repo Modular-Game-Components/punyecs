@@ -20,4 +20,5 @@ Contents
 
    usage
    esper
+   pygame
    api
