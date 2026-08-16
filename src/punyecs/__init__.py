@@ -28,6 +28,16 @@ def not_(self: Any):
     """
     return Constraint(unary_op=lambda ob: not ob, val1=self)
 
+def and_(self: Any):
+    """Cannot override ``and``, so ``and_`` is used to conjunct two
+    Contraints.
+    """
+    return Constraint(bin_op=lambda o, n: o and n, val1=self)
+
+def or_(self: Any):
+    """Cannot override ``or``, so ``or_`` is used to disjunct two Contraints."""
+    return Constraint(bin_op=lambda o, n: o and n, val1=self)
+
 @dataclass
 class c:
     _obj: Any = None
