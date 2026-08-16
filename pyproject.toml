@@ -1,6 +1,6 @@
 [project]
 name = "punyecs"
-version = "0.9.1"
+version = "1.0.0"
 description = "A simple attribute-based approach to ECS."
 readme = "README.md"
 authors = [
