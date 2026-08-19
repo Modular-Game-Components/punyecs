@@ -1,6 +1,6 @@
 # pyrefly: ignore-errors
 
-from punyecs import World, Trait, requirements, one_shot, give_traits, ex_attr, has_attr, c, not_
+from punyecs import World, Trait, requirements, one_shot, give_traits, ex_attr, c, not_
 
 
 def test_query():

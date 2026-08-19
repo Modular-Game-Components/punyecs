@@ -1,7 +1,8 @@
 from collections import namedtuple
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 import json
 import operator
+import sys
 from typing import Any, Callable
 
 def register_unary_op(op: Callable[[Any], Any]):
@@ -26,17 +27,27 @@ def not_(self: Any):
     """Cannot override ``not``, so ``not_`` is used to make negations of
     Contraints.
     """
+    if not hasattr(self, "eval"):
+        self = Const(self)
     return Constraint(unary_op=lambda ob: not ob, val1=self)
 
-def and_(self: Any):
+def and_(self: Any, other: Any):
     """Cannot override ``and``, so ``and_`` is used to conjunct two
     Contraints.
     """
-    return Constraint(bin_op=lambda o, n: o and n, val1=self)
+    if not hasattr(self, "eval"):
+        self = Const(self)
+    if not hasattr(other, "eval"):
+        other = Const(other)
+    return Constraint(bin_op=lambda o, n: o and n, val1=self, val2=other)
 
-def or_(self: Any):
+def or_(self: Any, other: Any):
     """Cannot override ``or``, so ``or_`` is used to disjunct two Contraints."""
-    return Constraint(bin_op=lambda o, n: o or n, val1=self)
+    if not hasattr(self, "eval"):
+        self = Const(self)
+    if not hasattr(other, "eval"):
+        other = Const(other)
+    return Constraint(bin_op=lambda o, n: o or n, val1=self, val2=other)
 
 @dataclass
 class c:
@@ -97,15 +108,15 @@ class Constraint:
     __abs__ = register_unary_op(operator.__abs__)
 
     __add__ = register_bin_op(operator.__add__)
-    __radd__ = register_bin_op(operator.__add__)
+    __radd__ = register_bin_op(lambda o, n: operator.__add__(n, o))
     __sub__ = register_bin_op(operator.__sub__)
-    __rsub__ = register_bin_op(operator.__sub__)
+    __rsub__ = register_bin_op(lambda o, n: operator.__sub__(n, o))
     __mul__ = register_bin_op(operator.__mul__)
-    __rmul__ = register_bin_op(operator.__mul__)
+    __rmul__ = register_bin_op(lambda o, n: operator.__mul__(n, o))
     __truediv__ = register_bin_op(operator.__truediv__)
-    __rtruediv__ = register_bin_op(operator.__truediv__)
+    __rtruediv__ = register_bin_op(lambda o, n: operator.__truediv__(n, o))
     __floordiv__ = register_bin_op(operator.__floordiv__)
-    __rfloordiv__ = register_bin_op(operator.__floordiv__)
+    __rfloordiv__ = register_bin_op(lambda o, n: operator.__floordiv__(n, o))
     # pyrefly: ignore
     __eq__ = register_bin_op(operator.__eq__)
     __lt__ = register_bin_op(operator.__lt__)
@@ -162,21 +173,22 @@ def give_traits(*traits: Trait, exclude=None, override=None):
     to None.
     """
     def wrapper(cls):
-        cls = dataclass(cls)
         nonlocal exclude
         nonlocal override
         if exclude is None:
             exclude = set()
         if override is None:
             override = dict()
+        annotations = dict(getattr(cls, "__annotations__", {}))
         for trait in traits:
             for attr, val in trait._fields.items():
                 if attr not in exclude:
-                    if attr not in override:
-                        setattr(cls, attr, val)
-                    else:
-                        setattr(cls, attr, override[attr])
-        return cls
+                    if attr in override:
+                        val = override[attr]
+                    annotations[attr] = type(val)
+                    setattr(cls, attr, val)
+        cls.__annotations__ = annotations
+        return dataclass(cls)
     return wrapper
 
 
@@ -245,8 +257,8 @@ class World:
         """
         serialized = {"entities" : []}
         for entity in self.entities:
-            entity_dict = entity.asdict()
-            entity_dict["obj_name"] = entity.__name__
+            entity_dict = asdict(entity)
+            entity_dict["obj_name"] = type(entity).__name__
             entity_dict["cls_name"] = type(entity).__name__
             serialized["entities"].append(entity_dict)
         with open(dest, "w") as file:
@@ -260,9 +272,24 @@ class World:
         with open(src, "r") as file:
             entities = json.load(file)
             for entity in entities["entities"]:
-                initialized_entity = globals()[entity["cls_name"]]
+                initialized_entity = self._find_class(entity["cls_name"])
                 initialized_entity.__name__ = entity["obj_name"]
-                self.add(initialized_entity) 
+                self.add(initialized_entity)
+
+    def _find_class(self, cls_name: str) -> type:
+        """Look up a class by name in the caller's module, falling back to
+        all loaded modules."""
+        frame = sys._getframe(2)
+        cls = frame.f_globals.get(cls_name)
+        if cls is None:
+            for module in sys.modules.values():
+                candidate = getattr(module, cls_name, None)
+                if isinstance(candidate, type):
+                    cls = candidate
+                    break
+        if cls is None:
+            raise KeyError(cls_name)
+        return cls 
 
     def extend(self, entities: list[Any]):
         """Add a collection of entities to the world.
